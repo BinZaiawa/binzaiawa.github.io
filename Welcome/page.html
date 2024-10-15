@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bin | 主页</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .header-container {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #f4f4f4;
+        }
+        .profile-pic {
+            width: 150px; /* 根据实际图片大小调整 */
+            height: 150px; /* 保持图片比例 */
+            border-radius: 50%; /* 圆形图片 */
+            overflow: hidden;
+            position: relative;
+            margin: auto;
+        }
+        .profile-pic img {
+            width: 100%;
+            height: auto;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .title {
+            margin: 20px 0;
+            font-size: 2em;
+            color: #333;
+        }
+        .subtitle {
+            width: 100%;
+            border-bottom: 2px solid #007bff;
+            margin: 10px 0;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="profile-pic">
+            <img src="./img/image.png" alt="">
+        </div>
+        <div class="title">欢迎进入我的主页</div>
+        <div class="subtitle"></div>
+    </div>
+    <div class="button-container">
+        <!-- 你怎么在偷看👀 -->
+        
+    
+    <!-- 其他样式保持不变 -->
+    <script>
+        // 等待DOM加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取返回按钮元素
+            var backButton = document.querySelector('a[href="#"]');
+            // 为返回按钮添加点击事件监听器
+            backButton.addEventListener('click', function(event) {
+                event.preventDefault(); // 阻止链接默认行为
+                window.close(); // 尝试关闭窗口
+            });
+
+            // 获取一个木函按钮元素
+            var woobxButton = document.querySelector('a[href="https://ol.woobx.cn/tool/"]');
+            // 为一个木函按钮添加点击事件监听器
+            woobxButton.addEventListener('click', function(event) {
+                event.preventDefault(); // 阻止链接默认行为
+                window.open('https://ol.woobx.cn/', '_blank'); // 在新标签页打开链接
+            });
+          var baiduButton = document.querySelector('a[href="https://www.baidu.com/"]');
+            // 为百度按钮添加点击事件监听器
+            baiduButton.addEventListener('click', function(event) {
+                event.preventDefault(); // 阻止链接默认行为
+                window.open('https://www.baidu.com', '_blank'); // 在新标签页打开链接
+            });
+          var ageButton = document.querySelector('a[href="age.html"]');
+            // 为年龄计算器按钮添加点击事件监听器
+            ageButton.addEventListener('click', function(event) {
+                event.preventDefault(); // 阻止链接默认行为
+                window.open('age.html', '_blank'); // 在新标签页打开链接
+            });
+          var meButton = document.querySelector('a[href="about me.html"]');
+            // 为关于我按钮添加点击事件监听器
+            meButton.addEventListener('click', function(event) {
+                event.preventDefault(); // 阻止链接默认行为
+                window.open('about me.html', '_blank'); // 在新标签页打开链接
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- 页面内容保持不变 -->
+    <div class="button-container">
+        <!-- 其他按钮保持不变 -->
+        <a href="./Welcome.html" class="button">返回</a>
+        <a href="https://ol.woobx.cn/tool/" class="button">一个木函</a>
+        <a href="https://www.baidu.com/" class="button">百度</a>
+        <a href="./Age.html" class="button">年龄计算器</a>
+        <a href="./Birthday.html" class="button">我的生日</a>
+        <a href="./Time1.html" class="button">倒计时</a>
+        <a href="./Clock-white.html" class="button">简洁时钟 · 白</a>
+        <a href="./Clock-black.html" class="button">简洁时钟 · 黑</a>
+        <a href="./Time2.html" class="button">计时器</a>
+        <a href="./MSDM EJZHS.html" class="button">摩斯电码和进制换算</a>
+        <a href="./Time date.html" class="button">时间+日期显示 · 白</a>
+        <a href="./Random.html" class="button">随机抽取器</a>
+        <!-- 其他待开发按钮保持不变 -->
+    </div>
+
+</body>
+</html>

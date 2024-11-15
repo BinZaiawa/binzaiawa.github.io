@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎页面</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: url('./Welcome/img/Wallpaper.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            transition: background 0.5s ease, background-image 0.5s ease;
+            transition: opacity 0.5s ease;
+        }
+
+        .clock {
+            font-size: 5rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        .message, .enter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        .message {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .enter-btn {
+            background: rgba(0, 102, 255, 0.3);
+            color: white;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .enter-btn:hover {
+            background: rgba(0, 82, 204, 0.5);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 480px) {
+            .clock {
+                font-size: 3rem;
+                padding: 15px 30px;
+            }
+
+            .message {
+                font-size: 1.2rem;
+            }
+        }
+
+        .clock, .message {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 设置按钮样式 */
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 设置面板样式 */
+        .settings-panel {
+            position: fixed;
+            top: 80px;
+            right: -320px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            min-width: 280px;
+            transition: right 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-panel.show {
+            right: 20px;
+            opacity: 1;
+        }
+
+        /* 开关样式 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* 滑块样式 */
+        .blur-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .setting-item {
+            margin: 15px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        /* 添加深色模式样式 */
+        body.dark-mode {
+            background: #1a1a1a !important;  /* 使用纯深色背景 */
+            transition: background 0.5s ease, background-image 0.5s ease;
+        }
+
+        /* 深色模式下的元素样式调整 */
+        .dark-mode .clock {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dark-mode .message,
+        .dark-mode .enter-btn {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dark-mode .settings-btn,
+        .dark-mode .settings-panel {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 上传按钮样式 */
+        .upload-btn, .reset-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .upload-btn:hover, .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .reset-btn {
+            background: rgba(255, 99, 71, 0.2);
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 99, 71, 0.3);
+        }
+
+        .clock-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .date {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            display: none;  /* 默认隐藏日期 */
+        }
+
+        .date.show {
+            display: block;
+        }
+
+        /* 修改时钟样式以支持大小调整 */
+        .clock {
+            font-size: 5rem; /* 默认大小 */
+            /* 其他样式保持不变 */
+        }
+
+        /* 大小滑块样式 */
+        .size-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 480px) {
+            .date {
+                font-size: 1rem;
+            }
+        }
+
+        /* 添加背景过渡动画 */
+        body {
+            /* 其他样式保持不变 */
+            transition: background 0.5s ease, background-image 0.5s ease;
+        }
+
+        /* 修改深色模式过渡 */
+        body.dark-mode {
+            background: #1a1a1a !important;
+            transition: background 0.5s ease, background-image 0.5s ease;
+        }
+
+        /* 添加其他元素的过渡效果 */
+        .clock, .message, .enter-btn, .settings-btn, .settings-panel {
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        /* 深色模式下元素的过渡 */
+        .dark-mode .clock,
+        .dark-mode .message,
+        .dark-mode .enter-btn,
+        .dark-mode .settings-btn,
+        .dark-mode .settings-panel {
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        /* 修改过渡动画相关的样式 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            transition: transform 0.8s ease;
+            z-index: -1;
+        }
+
+        body.dark-mode::before {
+            transform: translateX(100%);
+        }
+
+        /* 修改深色模式样式 */
+        body.dark-mode {
+            background: none !important;
+        }
+
+        /* 确保内容在动画期间可见 */
+        .clock-container, .message, .enter-btn, .settings-btn, .settings-panel {
+            z-index: 1;
+        }
+
+        /* 添加设置按钮动画 */
+        .settings-btn {
+            transition: transform 0.5s ease, background 0.3s ease;
+        }
+
+        .settings-btn.active {
+            transform: rotate(180deg);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;  /* 按钮之间的间距 */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .enter-btn {
+            background: rgba(0, 102, 255, 0.3);
+            color: white;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .enter-btn:hover {
+            background: rgba(0, 82, 204, 0.5);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+    <div class="clock" id="clock">20:58:23</div>
+        <div class="date" id="date">2024年3月14日 星期四</div>
+    </div>
+    <div class="message">晚上好！辛苦一天了好好休息一下吧 😊</div>
+    <div class="button-group">
+        <a href="./Welcome/Welcome.html" class="enter-btn">进入主页</a>
+        <a href="https://binzaiawa.github.io/Welcome/page.html" class="enter-btn">进入工具箱</a>
+    </div>
+
+    <button class="settings-btn" onclick="toggleSettings()">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <div class="settings-panel" id="settingsPanel">
+        <div class="setting-item">
+            <span>启用模糊效果</span>
+            <label class="switch">
+                <input type="checkbox" id="blurToggle" checked onchange="toggleBlur()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="setting-item">
+            <span>模糊强度</span>
+            <input type="range" class="blur-slider" id="blurSlider" 
+                   min="0" max="20" value="10" onchange="updateBlur()">
+        </div>
+        <div class="setting-item">
+            <span>深色模式</span>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="setting-item">
+            <span>自定义背景</span>
+            <input type="file" id="bgUpload" accept="image/*" style="display: none" onchange="handleBgUpload(event)">
+            <button class="upload-btn" onclick="document.getElementById('bgUpload').click()">
+                <i class="fas fa-image"></i> 上传图片
+            </button>
+        </div>
+        <div class="setting-item">
+            <span>恢复默认背景</span>
+            <button class="reset-btn" onclick="resetBackground()">
+                <i class="fas fa-undo"></i> 重置
+            </button>
+        </div>
+        <div class="setting-item">
+            <span>12/24小时制</span>
+            <label class="switch">
+                <input type="checkbox" id="timeFormatToggle" checked onchange="toggleTimeFormat()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="setting-item">
+            <span>时钟大小</span>
+            <input type="range" class="size-slider" id="clockSizeSlider" 
+                   min="3" max="8" value="5" step="0.5" onchange="updateClockSize()">
+        </div>
+        <div class="setting-item">
+            <span>显示日期</span>
+            <label class="switch">
+                <input type="checkbox" id="dateToggle" onchange="toggleDate()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <script>
+        let is24Hour = true; // 默认24小时制
+
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // 处理12/24小时制
+            let timeStr;
+            if (is24Hour) {
+                timeStr = `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
+            } else {
+                const period = hours >= 12 ? '下午' : '上午';
+                hours = hours % 12 || 12;
+                timeStr = `${period} ${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
+            }
+            
+            document.getElementById('clock').textContent = timeStr;
+            
+            // 更新日期
+            const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+            const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 星期${weekDays[now.getDay()]}`;
+            document.getElementById('date').textContent = dateStr;
+        }
+
+        function toggleTimeFormat() {
+            is24Hour = document.getElementById('timeFormatToggle').checked;
+            updateClock();
+            // 保存设置
+            localStorage.setItem('is24Hour', is24Hour);
+        }
+
+        function updateClockSize() {
+            const size = document.getElementById('clockSizeSlider').value;
+            document.querySelector('.clock').style.fontSize = `${size}rem`;
+            // 保存设置
+            localStorage.setItem('clockSize', size);
+        }
+
+        // 页面加载时检查并应用   存的设置
+        document.addEventListener('DOMContentLoaded', () => {
+            // 现有的加载代码...
+
+            // 加载时钟格式设置
+            const saved24Hour = localStorage.getItem('is24Hour');
+            if (saved24Hour !== null) {
+                is24Hour = saved24Hour === 'true';
+                document.getElementById('timeFormatToggle').checked = is24Hour;
+            }
+
+            // 加载时钟大小设置
+            const savedSize = localStorage.getItem('clockSize');
+            if (savedSize) {
+                document.getElementById('clockSizeSlider').value = savedSize;
+                document.querySelector('.clock').style.fontSize = `${savedSize}rem`;
+            }
+
+            // 加载日期显示设置
+            const showDate = localStorage.getItem('showDate') === 'true';
+            document.getElementById('dateToggle').checked = showDate;
+            document.getElementById('date').classList.toggle('show', showDate);
+
+            // 加载深色模式设置
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (savedDarkMode) {
+                document.getElementById('darkModeToggle').checked = true;
+                document.body.classList.add('dark-mode');
+                if (!localStorage.getItem('customBackground')) {
+                    document.body.style.backgroundImage = 'none';
+                }
+            }
+
+            // 检查是否需要自动开启深色模式
+            checkAutoDarkMode();
+        });
+
+        // 初始更新
+        updateClock();
+        // 每秒更新一次
+        setInterval(updateClock, 1000);
+
+        // 根据时间更新问候语
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const messageElement = document.querySelector('.message');
+            let greeting;
+
+            if (hour >= 5 && hour < 12) {
+                greeting = '早上好！开启充满希望的一天 😊';
+            } else if (hour >= 12 && hour < 14) {
+                greeting = '中午好！休息一下吧 😊';
+            } else if (hour >= 14 && hour < 18) {
+                greeting = '下午好！继续加油 😊';
+            } else if (hour >= 18 && hour < 22) {
+                greeting = '晚上好！辛苦一天了好好休息一下吧 😊';
+            } else {
+                greeting = '夜深了，该休息了 😴';
+            }
+
+            messageElement.textContent = greeting;
+        }
+
+        // 初始更新问候语
+        updateGreeting();
+        // 每小时更新一次问候语
+        setInterval(updateGreeting, 3600000);
+
+        // 添加新的 JavaScript 函数
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const btn = document.querySelector('.settings-btn');
+            panel.classList.toggle('show');
+            btn.classList.toggle('active');
+        }
+
+        function toggleBlur() {
+            const enabled = document.getElementById('blurToggle').checked;
+            const blurValue = enabled ? document.getElementById('blurSlider').value + 'px' : '0px';
+            document.querySelector('.clock').style.backdropFilter = `blur(${blurValue})`;
+            document.querySelector('.clock').style.webkitBackdropFilter = `blur(${blurValue})`;
+        }
+
+        function updateBlur() {
+            if (document.getElementById('blurToggle').checked) {
+                const value = document.getElementById('blurSlider').value + 'px';
+                document.querySelector('.clock').style.backdropFilter = `blur(${value})`;
+                document.querySelector('.clock').style.webkitBackdropFilter = `blur(${value})`;
+            }
+        }
+
+        // 修改重置背函数
+        function resetBackground() {
+            localStorage.removeItem('customBackground');
+            const isDarkMode = document.getElementById('darkModeToggle').checked;
+            
+            if (isDarkMode) {
+                document.body.style.backgroundImage = 'none';
+            } else {
+                document.body.classList.remove('dark-mode');
+                setTimeout(() => {
+                    document.body.style.backgroundImage = "url('./Welcome/img/Wallpaper.png')";
+                }, 800);
+            }
+        }
+
+        // 修改深色模式切换函数
+        function toggleDarkMode() {
+            const isDarkMode = document.getElementById('darkModeToggle').checked;
+            
+            const hasCustomBg = localStorage.getItem('customBackground');
+            
+            if (!hasCustomBg) {
+                if (isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    setTimeout(() => {
+                        document.body.style.backgroundImage = 'none';
+                    }, 800);
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    setTimeout(() => {
+                        document.body.style.backgroundImage = "url('./Welcome/img/Wallpaper.png')";
+                    }, 800);
+                }
+            } else {
+                document.body.classList.toggle('dark-mode', isDarkMode);
+            }
+            
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        // 添加日期显示控制函数
+        function toggleDate() {
+            const dateElement = document.getElementById('date');
+            const isVisible = document.getElementById('dateToggle').checked;
+            dateElement.classList.toggle('show', isVisible);
+            // 保存设置
+            localStorage.setItem('showDate', isVisible);
+        }
+
+        // 添加背景图片处理函数
+        function handleBgUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        localStorage.setItem('customBackground', e.target.result);
+                        document.body.style.opacity = '0';
+                        setTimeout(() => {
+                            document.body.style.backgroundImage = `url(${e.target.result})`;
+                            document.body.style.opacity = '1';
+                        }, 500);
+                        
+                        if (document.body.classList.contains('dark-mode')) {
+                            document.getElementById('darkModeToggle').checked = false;
+                            document.body.classList.remove('dark-mode');
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 添加自动深色模式检查函数
+        function checkAutoDarkMode() {
+            const hour = new Date().getHours();
+            const minutes = new Date().getMinutes();
+            const totalMinutes = hour * 60 + minutes;
+            
+            // 晚上9:30（21:30）后自动开启深色模式
+            if (totalMinutes >= 21 * 60 + 30) {
+                if (!document.body.classList.contains('dark-mode')) {
+                    document.getElementById('darkModeToggle').checked = true;
+                    toggleDarkMode();
+                }
+            }
+        }
+
+        // 每分钟检查一次是否需要自动切换深色模式
+        setInterval(checkAutoDarkMode, 60000);
+
+        // 修改页面跳转动画
+        document.querySelectorAll('.enter-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                document.body.style.opacity = '0';
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html> 

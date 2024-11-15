@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生小格 - 时光印记</title>
+    <style>
+        :root {
+            --primary-color: #98c3b9;
+            --bg-color: #f5f7fa;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            --text-color: #2c3e50;
+            --text-secondary: #666;
+            --card-bg: white;
+            --input-border: #e0e0e0;
+            --hover-bg: #f0f2f5;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+        }
+
+        :root[data-theme="dark"] {
+            --primary-color: #7ab3a7;
+            --bg-color: #1a1a1a;
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            --text-color: #e0e0e0;
+            --text-secondary: #aaa;
+            --card-bg: #2d2d2d;
+            --input-border: #404040;
+            --hover-bg: #363636;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            padding: 40px 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--input-border);
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            color: var(--text-color);
+        }
+
+        .date-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(152, 195, 185, 0.2);
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--primary-color);
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        .time-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .stat-item {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background: var(--hover-bg);
+            transition: var(--transition);
+            flex-grow: 1;
+            min-width: min-content;
+            max-width: fit-content;
+        }
+
+        .stat-item:hover {
+            background: #f0f2f5;
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stat-unit {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            gap: 3px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+
+        .block {
+            aspect-ratio: 1;
+            border-radius: calc(var(--border-radius) / 3);
+            transition: var(--transition);
+        }
+
+        .block:hover {
+            transform: scale(1.2);
+            z-index: 1;
+        }
+
+        /* 更新颜色方案，使用更柔和的色调 */
+        .block.past { background-color: #98c3b9; }
+        .block.sleep { background-color: #a8d8e8; }
+        .block.work { background-color: #b8a89e; }
+        .block.child { background-color: #eeb4b9; }
+        .block.parents { background-color: #8faec4; }
+        .block.retired { background-color: #ffd54f; }
+        .block.future { background-color: #e2e2e2; }
+
+        .description {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .description-item {
+            padding: 12px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            border-radius: calc(var(--border-radius) / 2);
+            margin-bottom: 8px;
+        }
+
+        .description-item:hover {
+            transform: translateX(5px);
+        }
+
+        .description-item.past { 
+            background-color: #98c3b9;
+            color: white;
+        }
+        .description-item.sleep { 
+            background-color: #a8d8e8;
+            color: white;
+        }
+        .description-item.work { 
+            background-color: #b8a89e;
+            color: white;
+        }
+        .description-item.child { 
+            background-color: #eeb4b9;
+            color: white;
+        }
+        .description-item.parents { 
+            background-color: #8faec4;
+            color: white;
+        }
+        .description-item.retired { 
+            background-color: #ffd54f;
+            color: white;
+        }
+        .description-item.future { 
+            background-color: #e2e2e2;
+            color: #666;
+        }
+
+        .description-item span {
+            padding-left: 32px;
+            line-height: 1.6;
+            position: relative;
+            flex: 1;
+        }
+
+        .color-block {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: calc(var(--border-radius) / 3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-block.past { background-color: #98c3b9; }
+        .color-block.sleep { background-color: #a8d8e8; }
+        .color-block.work { background-color: #b8a89e; }
+        .color-block.child { background-color: #eeb4b9; }
+        .color-block.parents { background-color: #8faec4; }
+        .color-block.retired { background-color: #ffd54f; }
+        .color-block.future { 
+            background-color: #e2e2e2;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 1.5em;
+            }
+
+            .grid {
+                gap: 2px;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .time-stats {
+                justify-content: flex-start;
+                overflow-x: auto;
+            }
+            
+            .stat-item {
+                flex: 0 0 auto;
+            }
+        }
+
+        .time-stats::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .time-stats::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .time-stats::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .time-stats::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* 添加数字动画相关样式 */
+        .stat-number {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            height: 1.8em;
+            overflow: hidden;
+        }
+
+        .digit {
+            position: relative;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .digit.animate {
+            animation: numberChange 0.3s ease;
+        }
+
+        @keyframes numberChange {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* 添加主题切换按钮样式 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-color);
+        }
+
+        /* 深色模式下的特殊颜色调整 */
+        :root[data-theme="dark"] .block.future {
+            background-color: #404040;
+        }
+
+        :root[data-theme="dark"] .description-item.future {
+            background-color: #404040;
+            color: #e0e0e0;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            background: var(--hover-bg);
+        }
+
+        .back-button svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()" aria-label="返回">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </button>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+        <svg class="sun" viewBox="0 0 24 24">
+            <path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2c.28 0 .5-.22.5-.5v-3c0-.28-.22-.5-.5-.5s-.5.22-.5.5v3c0 .28.22.5.5.5zm0 14c-.28 0-.5.22-.5.5v3c0 .28.22.5.5.5s.5-.22.5-.5v-3c0-.28-.22-.5-.5-.5zm8.5-8.5h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm-14 0h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm12.72-5.11l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0zm-11.31 11.31l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0zm0-11.31c-.2-.2-.51-.2-.71 0l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71zm11.31 11.31c-.2-.2-.51-.2-.71 0l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>人生小格</h1>
+            <p>记录生命中的每一个时刻</p>
+        </div>
+
+        <input type="date" class="date-input" id="birthDate" max="2024-12-31">
+        
+        <div class="section">
+            <div class="section-title">过去时光</div>
+            <div class="time-stats" id="pastStats"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">剩余时光</div>
+            <div class="time-stats" id="remainingStats"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">人生进度</div>
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <div class="description">
+            <div class="section-title">说明文字</div>
+            <div class="description-item past">
+                <span>
+                    <div class="color-block past"></div>
+                    你已经走过的生命
+                </span>
+            </div>
+            <div class="description-item sleep">
+                <span>
+                    <div class="color-block sleep"></div>
+                    如果你平均每天休息 8 小时，这是你余下生命里睡眠占用的时间
+                </span>
+            </div>
+            <div class="description-item work">
+                <span>
+                    <div class="color-block work"></div>
+                    如果你 65 岁退休，退休前平均每天工作 8    时，这是你余下生命里工作占用的时间
+                </span>
+            </div>
+            <div class="description-item retired">
+                <span>
+                    <div class="color-block retired"></div>
+                    65 岁，你退休了
+                </span>
+            </div>
+            <div class="description-item child">
+                <span>
+                    <div class="color-block child"></div>
+                    如果你 28 岁生孩子，孩子18岁出门上大学，这 18 年里你平均每天能花 5 个小时陪伴孩子，这里是你余下生命里所用去的时间
+                </span>
+            </div>
+            <div class="description-item parents">
+                <span>
+                    <div class="color-block parents"></div>
+                    如果你每个月能看望父母一天，在他们 80 岁前，这是你的余生里还能陪伴他们的时光
+                </span>
+            </div>
+            <div class="description-item future">
+                <span>
+                    <div class="color-block future"></div>
+                    除了以上之外，你剩下的所有日子
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let updateInterval;
+
+        function calculateTime(birthDate) {
+            const now = new Date();
+            const birth = new Date(birthDate);
+            const death = new Date(birth.getTime() + (80 * 365.25 * 24 * 60 * 60 * 1000));
+            
+            const diffTime = now - birth;
+            const remainingTime = death - now;
+
+            function formatNumber(num) {
+                return num.toFixed(1);
+            }
+
+            return {
+                past: {
+                    years: formatNumber(diffTime / (365.25 * 24 * 60 * 60 * 1000)),
+                    months: formatNumber(diffTime / (30.44 * 24 * 60 * 60 * 1000)),
+                    days: formatNumber(diffTime / (24 * 60 * 60 * 1000)),
+                    hours: formatNumber(diffTime / (60 * 60 * 1000)),
+                    minutes: formatNumber(diffTime / (60 * 1000)),
+                    seconds: formatNumber(diffTime / 1000)
+                },
+                remaining: {
+                    years: formatNumber(remainingTime / (365.25 * 24 * 60 * 60 * 1000)),
+                    months: formatNumber(remainingTime / (30.44 * 24 * 60 * 60 * 1000)),
+                    days: formatNumber(remainingTime / (24 * 60 * 60 * 1000)),
+                    hours: formatNumber(remainingTime / (60 * 60 * 1000)),
+                    minutes: formatNumber(remainingTime / (60 * 1000)),
+                    seconds: formatNumber(remainingTime / 1000)
+                },
+                percentage: (diffTime / (80 * 365.25 * 24 * 60 * 60 * 1000)) * 100
+            };
+        }
+
+        function createDigitSpans(number, previousNumber = '') {
+            const currentNum = parseFloat(number).toFixed(1);
+            const prevNum = previousNumber ? parseFloat(previousNumber).toFixed(1) : '';
+            
+            const digits = currentNum.toString().split('');
+            const prevDigits = prevNum.toString().split('');
+            
+            return digits.map((digit, index) => {
+                const shouldAnimate = prevNum && prevDigits[index] !== digit;
+                return `<span class="digit ${shouldAnimate ? 'animate' : ''}">${digit}</span>`;
+            }).join('');
+        }
+
+        function updateStats() {
+            const birthDate = document.getElementById('birthDate').value;
+            if (!birthDate) return;
+
+            const times = calculateTime(birthDate);
+            const statsContainers = ['pastStats', 'remainingStats'];
+            
+            statsContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                const previousValues = Array.from(container.querySelectorAll('.stat-number'))
+                    .map(el => el.textContent.trim());
+                
+                const timeData = containerId === 'pastStats' ? times.past : times.remaining;
+                const units = ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
+                
+                container.innerHTML = units.map((unit, index) => `
+                    <div class="stat-item">
+                        <div class="stat-number">
+                            ${createDigitSpans(timeData[unit], previousValues[index])}
+                        </div>
+                        <div class="stat-unit">${
+                            unit === 'years' ? '年' : 
+                            unit === 'months' ? '月' : 
+                            unit === 'days' ? '日' : 
+                            unit === 'hours' ? '时' : 
+                            unit === 'minutes' ? '分' : '秒'
+                        }</div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        function generateGrid() {
+            const birthDate = document.getElementById('birthDate').value;
+            if (!birthDate) return;
+
+            const times = calculateTime(birthDate);
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            const birth = new Date(birthDate);
+            const now = new Date();
+            const currentAge = (now - birth) / (365.25 * 24 * 60 * 60 * 1000);
+
+            // 400个格子代表80年，每个格子代表0.2年
+            for (let i = 0; i < 400; i++) {
+                const block = document.createElement('div');
+                block.className = 'block';
+                const age = (i / 5); // 每个方块代表0.2岁
+
+                if (age <= currentAge) {
+                    // 已经过去的时间
+                    block.classList.add('past');
+                } else {
+                    // 未来时间的有序分配
+                    if (age >= 65) {
+                        // 65岁后全部是退休时间
+                        block.classList.add('retired');
+                    } else {
+                        // 按行分配不同类型的时间
+                        const row = Math.floor(i / 20); // 计算当前在第几行
+                        const rowPosition = i % 20; // 计算在当前行的位置
+
+                        if (row < 4) {
+                            // 前4主要是睡眠时间
+                            block.classList.add('sleep');
+                        } else if (row < 8) {
+                            // 接下来4行是工作时间
+                            block.classList.add('work');
+                        } else if (age >= 28 && age < 46) {
+                            // 28-46岁期间的陪伴孩子时间
+                            block.classList.add('child');
+                        } else if (row < 12) {
+                            // 接下来4行是陪伴父母时间
+                            if (rowPosition % 4 === 0) { // 每行每隔4个格子放置一个父母时间
+                                block.classList.add('parents');
+                            } else {
+                                block.classList.add('future');
+                            }
+                        } else {
+                            // 剩余时间
+                            block.classList.add('future');
+                        }
+                    }
+                }
+                
+                grid.appendChild(block);
+            }
+        }
+
+        document.getElementById('birthDate').addEventListener('change', function() {
+            generateGrid();
+            updateStats();
+            clearInterval(updateInterval);
+            updateInterval = setInterval(updateStats, 1000);
+        });
+
+        // 设置日期选择器的最大值为今天
+        document.getElementById('birthDate').max = new Date().toISOString().split('T')[0];
+
+        window.addEventListener('resize', () => {
+            if (document.getElementById('birthDate').value) {
+                updateStats();
+            }
+        });
+
+        function cleanup() {
+            clearInterval(updateInterval);
+        }
+
+        window.addEventListener('unload', cleanup);
+
+        // 检测系统主题偏好
+        function getPreferredTheme() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        }
+
+        // 设置主题
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        // 切换主题
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        // 更新主题图标
+        function updateThemeIcon(theme) {
+            const button = document.querySelector('.theme-toggle');
+            if (theme === 'dark') {
+                button.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>`;
+            } else {
+                button.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2c.28 0 .5-.22.5-.5v-3c0-.28-.22-.5-.5-.5s-.5.22-.5.5v3c0 .28.22.5.5.5zm0 14c-.28 0-.5.22-.5.5v3c0 .28.22.5.5.5s.5-.22.5-.5v-3c0-.28-.22-.5-.5-.5zm8.5-8.5h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm-14 0h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm12.72-5.11l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0zm-11.31 11.31l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0zm0-11.31c-.2-.2-.51-.2-.71 0l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71zm11.31 11.31c-.2-.2-.51-.2-.71 0l-2.12 2.12c-.2.2-.2.51 0 .71.2.2.51.2.71 0l2.12-2.12c.2-.2.2-.51 0-.71z"/></svg>`;
+            }
+        }
+
+        // 初始化主题
+        const savedTheme = localStorage.getItem('theme') || getPreferredTheme();
+        setTheme(savedTheme);
+        updateThemeIcon(savedTheme);
+
+        // 监听系统主题变化
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) {
+                setTheme(e.matches ? 'dark' : 'light');
+                updateThemeIcon(e.matches ? 'dark' : 'light');
+            }
+        });
+
+        function goBack() {
+            window.open('https://binzaiawa.github.io/Welcome/page.html', '_self');
+            // 注意：由于安全限制，JavaScript 不能直接关闭非脚本打开的标签页
+        }
+    </script>
+</body>
+</html> 

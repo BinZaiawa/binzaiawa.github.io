@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生辰计算器 | Bin Tools</title>
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, 
+                        color 0.3s ease;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            background: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            position: relative;
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            min-width: 300px;
+            margin: 0 auto;
+            transition: backdrop-filter 0.3s ease, background 0.3s ease;
+        }
+
+        body > *:not(.container) {
+            display: none;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--number-color);
+            outline: none;
+        }
+
+        .result {
+            background: transparent;
+            padding: 0;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .result-item {
+            background: var(--item-bg);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .result-item:first-child {
+            box-shadow: none;
+            min-height: auto;
+            padding: 10px;
+        }
+
+        .number-animation {
+            font-size: 1.2em;
+            margin: 5px 0;
+            color: var(--number-color);
+            word-break: break-all;
+        }
+
+        .btn-start {
+            width: 100%;
+            padding: 14px;
+            background: var(--number-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-start:hover {
+            background: var(--number-color-hover);
+            transform: translateY(-2px);
+        }
+
+        .back-arrow {
+            display: flex !important;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(var(--text-rgb), 0.1);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-arrow:hover {
+            background: rgba(var(--text-rgb), 0.2);
+            transform: translateX(-3px);
+        }
+
+        .settings-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            color: var(--text-color);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(var(--text-rgb), 0.1);
+            z-index: 1000;
+        }
+
+        .settings-icon:hover {
+            background: rgba(var(--text-rgb), 0.2);
+            transform: rotate(30deg);
+        }
+
+        .settings-panel {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 999;
+            min-width: 250px;
+        }
+
+        .settings-panel.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 主题相关的CSS变量 */
+        :root {
+            --text-rgb: 44, 62, 80;
+            --bg-color: white;
+            --text-color: #2c3e50;
+            --input-bg: white;
+            --input-border: #e0e0e0;
+            --result-bg: #f8f9fa;
+            --item-bg: white;
+            --number-color: #3498db;
+            --number-color-hover: #2980b9;
+            --body-bg: linear-gradient(45deg, #a8edea 0%, #fed6e3 100%);
+            --number-color-rgb: 52, 152, 219; /* #3498db 的 RGB 值 */
+        }
+
+        [data-theme="dark"] {
+            --text-rgb: 255, 255, 255;
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --input-bg: #2d2d2d;
+            --input-border: #404040;
+            --result-bg: #2d2d2d;
+            --item-bg: #333333;
+            --number-color: #5dade2;
+            --number-color-hover: #3498db;
+            --body-bg: #121212;
+            --number-color-rgb: 93, 173, 226; /* #5dade2 的 RGB 值 */
+        }
+
+        [data-theme="dark"] .result-item {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .result-item:not(:first-child) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .result-item:not(:first-child):hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .input-section.hide {
+            display: none;
+        }
+
+        /* 添加年月日的显示 */
+        .date-display {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .date-display .number-animation {
+            margin: 0;
+        }
+
+        /* 添加生肖和星座的容器样式 */
+        .zodiac-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .zodiac-box {
+            background: rgba(var(--number-color-rgb), 0.1);
+            padding: 5px 10px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* 设置面板样式 */
+        .settings-panel {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 999;
+            min-width: 250px;
+        }
+
+        .setting-item {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--input-border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .font-size-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .apply-btn {
+            padding: 4px 12px;
+            background: var(--number-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .upload-btn {
+            padding: 4px 12px;
+            background: var(--number-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 8px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* 开关样式 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--number-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .blur-control {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .blur-control.show {
+            display: block;
+        }
+
+        /* 修改透明容器样式 */
+        .container.transparent {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        [data-theme="dark"] .container.transparent {
+            background: rgba(26, 26, 26, 0.3) !important;
+        }
+
+        /* 确保数字动样式正确应用 */
+        .number-animation {
+            display: inline-flex;
+            color: var(--number-color);
+            font-weight: bold;
+            transition: font-size 0.3s ease;
+        }
+
+        /* 确保模糊控面板正确显示 */
+        .blur-control {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--input-border);
+        }
+
+        .blur-control.show {
+            display: block;
+        }
+
+        .zodiac-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .zodiac-display .divider {
+            color: var(--number-color);
+            opacity: 0.5;
+        }
+
+        .zodiac-display .number-animation {
+            color: var(--number-color);
+        }
+
+        .info-box {
+            background: rgba(var(--number-color-rgb), 0.1);
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .divider {
+            color: var(--text-color);
+            opacity: 0.5;
+            margin: 0 5px;
+        }
+
+        [data-theme="dark"] .info-box {
+            background: rgba(var(--number-color-rgb), 0.2);
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .number-animation span {
+            display: inline-block;
+            position: relative;
+        }
+
+        .number-animation span.slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-arrow">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <button class="settings-icon" id="settingsIcon">
+            <i class="fas fa-cog"></i>
+        </button>
+        <div class="settings-panel" id="settingsPanel">
+            <div class="setting-item">
+                <label>数字大小</label>
+                <div class="font-size-control">
+                    <input type="range" id="ageFontSize" min="16" max="51" value="24">
+                    <input type="number" id="ageFontSizeInput" min="16" max="51" value="24" style="width: 60px;">
+                    <button id="applyFontSize" class="apply-btn">修改</button>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label>背景图片</label>
+                <div class="bg-upload-control">
+                    <input type="file" id="bgImageUpload" accept="image/*" style="display: none;">
+                    <button class="upload-btn" id="uploadBtn">上传图片</button>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label>背景透明</label>
+                <label class="switch">
+                    <input type="checkbox" id="transparentBg">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="blur-control" id="blurControl">
+                <label>模糊效果</label>
+                <input type="range" id="blurRange" min="0" max="20" value="10">
+            </div>
+            <div class="setting-item">
+                <label>深色模式</label>
+                <label class="switch">
+                    <input type="checkbox" id="darkMode">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item" style="margin-top: 15px;">
+                <button id="resetSettings" class="reset-btn">重置设置</button>
+            </div>
+        </div>
+        <h1>生辰计算器</h1>
+        <div class="input-section" id="inputSection">
+            <div class="input-group">
+                <label for="datePicker">选择出生日期：</label>
+                <input type="date" id="datePicker">
+            </div>
+            <div class="input-group">
+                <label for="dateInput">或手动输入 (格式: YYYYMMDD)：</label>
+                <input type="text" id="dateInput" placeholder="例如：19900101">
+            </div>
+        </div>
+        <div id="result" class="result">
+            <!-- 结果将通过 JavaScript 动态插入 -->
+        </div>
+        <button class="btn-start" id="startBtn">开始计算</button>
+    </div>
+
+    <script>
+        // 首先定义所有具函数
+        function getZodiac(year) {
+            const zodiacList = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+            return zodiacList[(year - 4) % 12];
+        }
+
+        function getConstellation(month, day) {
+            const dates = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 23, 22];
+            const constellations = ['摩羯座', '水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', 
+                                   '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座'];
+            return day < dates[month - 1] ? constellations[month - 1] : constellations[month % 12];
+        }
+
+        function getDaysUntilNextBirthday(birthDate) {
+            const today = new Date();
+            const nextBirthday = new Date(today.getFullYear(), 
+                                         birthDate.getMonth(), 
+                                         birthDate.getDate());
+            
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            
+            const diffTime = Math.abs(nextBirthday - today);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        function getSeasons(birthDate) {
+            const today = new Date();
+            const years = today.getFullYear() - birthDate.getFullYear();
+            return years * 4;
+        }
+
+        function getBirthdays(birthDate) {
+            const today = new Date();
+            let birthdays = today.getFullYear() - birthDate.getFullYear();
+            
+            if (today.getMonth() < birthDate.getMonth() || 
+                (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+                birthdays--;
+            }
+            
+            return birthdays;
+        }
+
+        function updateNumbers() {
+            const birthDate = window._birthDate;
+            if (!birthDate) return;
+
+            const now = new Date();
+            const diffTime = Math.abs(now - birthDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            
+            const exactYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+            const formattedYears = exactYears.toFixed(9);
+            
+            const years = Math.floor(diffDays / 365);
+            const months = Math.floor((diffDays % 365) / 30);
+            const days = diffDays % 30;
+
+            updateNumberWithAnimation('exactAge', formattedYears);
+            updateNumberWithAnimation('years', years);
+            updateNumberWithAnimation('months', months);
+            updateNumberWithAnimation('days', days);
+            updateNumberWithAnimation('totalDays', diffDays);
+            updateNumberWithAnimation('hours', diffHours);
+            updateNumberWithAnimation('minutes', diffMinutes);
+        }
+
+        function updateNumberWithAnimation(id, newValue) {
+            const element = document.getElementById(id);
+            if (!element) return;
+
+            const newValueStr = newValue.toString();
+            const oldValueStr = element.textContent || '0';
+
+            if (newValueStr === oldValueStr) return;
+
+            element.innerHTML = '';
+
+            for (let i = 0; i < Math.max(newValueStr.length, oldValueStr.length); i++) {
+                const newDigit = newValueStr[i] || '0';
+                const oldDigit = oldValueStr[i] || '0';
+                const digitSpan = document.createElement('span');
+                
+                digitSpan.textContent = newDigit;
+                
+                if (id === 'exactAge') {
+                    digitSpan.style.fontSize = document.getElementById('ageFontSize').value + 'px';
+                }
+                
+                if (newDigit !== oldDigit) {
+                    digitSpan.classList.add('slide-up');
+                    digitSpan.addEventListener('animationend', function() {
+                        digitSpan.classList.remove('slide-up');
+                    }, { once: true });
+                }
+                
+                element.appendChild(digitSpan);
+            }
+        }
+
+        // 修改 autoCalculate 函数
+        function autoCalculate() {
+            let birthDate;
+            const datePicker = document.getElementById('datePicker');
+            const dateInput = document.getElementById('dateInput');
+            
+            if (datePicker.value) {
+                birthDate = new Date(datePicker.value);
+            } else if (dateInput.value) {
+                const dateRegex = /^\d{8}$/;
+                if (!dateRegex.test(dateInput.value)) {
+                    alert('请输入正确的日期格式：YYYYMMDD');
+                    return;
+                }
+                const year = dateInput.value.substring(0, 4);
+                const month = dateInput.value.substring(4, 6);
+                const day = dateInput.value.substring(6, 8);
+                birthDate = new Date(`${year}-${month}-${day}`);
+            } else {
+                alert('请选择或输入出生日期');
+                return;
+            }
+
+            const now = new Date();
+            if (birthDate > now) {
+                alert('出生期不能晚于今天');
+                return;
+            }
+
+            window._birthDate = birthDate;
+
+            const zodiacSign = getZodiac(birthDate.getFullYear());
+            const constellation = getConstellation(birthDate.getMonth() + 1, birthDate.getDate());
+            const daysUntilBirthday = getDaysUntilNextBirthday(birthDate);
+            const seasonsPassed = getSeasons(birthDate);
+            const birthdaysPassed = getBirthdays(birthDate);
+
+            const result = `
+                <div class="result-item">
+                    你已经<div class="number-animation" id="exactAge">0.000000000</div>岁了
+                </div>
+                <div class="result-grid">
+                    <div class="result-item" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                        <span>生肖：<span class="number-animation">${zodiacSign}</span></span>
+                        <span>星座：<span class="number-animation">${constellation}</span></span>
+                    </div>
+                    <div class="result-item">
+                        距下个生日<br>
+                        <div class="number-animation" id="nextBirthday">${daysUntilBirthday}</div>天
+                    </div>
+                    <div class="result-item">
+                        已来到世界：
+                        <div class="date-display">
+                            <div class="number-animation" id="years">0</div>年
+                            <div class="number-animation" id="months">0</div>月
+                            <div class="number-animation" id="days">0</div>天
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        已度过<br><div class="number-animation" id="seasons">${seasonsPassed}</div>个春秋
+                    </div>
+                    <div class="result-item">
+                        已度过<br><div class="number-animation" id="birthdays">${birthdaysPassed}</div>个生日
+                    </div>
+                    <div class="result-item">
+                        总计<br><div class="number-animation" id="totalDays">0</div>天
+                    </div>
+                    <div class="result-item">
+                        相当于<br><div class="number-animation" id="hours">0</div>小时
+                    </div>
+                    <div class="result-item">
+                        或<br><div class="number-animation" id="minutes">0</div>分钟
+                    </div>
+                </div>
+            `;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = result;
+            resultDiv.classList.add('show');
+
+            // 清除之前的定时器
+            if (window.updateInterval) {
+                clearInterval(window.updateInterval);
+            }
+
+            // 立即更新一次
+            updateNumbers();
+            // 设置定时更新
+            window.updateInterval = setInterval(updateNumbers, 1000);
+        }
+
+        // 确保在 DOM 加载完成后绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定开始计算按钮事件
+            const startBtn = document.getElementById('startBtn');
+            startBtn.addEventListener('click', function() {
+                autoCalculate();
+                this.style.display = 'none';
+                document.getElementById('inputSection').classList.add('hide');
+            });
+
+            // 绑定日期输入框联动
+            const datePicker = document.getElementById('datePicker');
+            const dateInput = document.getElementById('dateInput');
+
+            datePicker.addEventListener('change', function(e) {
+                dateInput.value = e.target.value.replace(/-/g, '');
+            });
+
+            dateInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (value.length === 8) {
+                    const year = value.substring(0, 4);
+                    const month = value.substring(4, 6);
+                    const day = value.substring(6, 8);
+                    datePicker.value = `${year}-${month}-${day}`;
+                }
+            });
+
+            // ... 其他设置相关的代码保持不变 ...
+
+            // 添加返回按钮的点击事件处理
+            const backArrow = document.querySelector('.back-arrow');
+            backArrow.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open('https://binzaiawa.github.io/Welcome/page.html', '_self');
+                setTimeout(() => {
+                    window.close();
+                }, 100);
+            });
+        });
+
+        // 确保在页面加载完成后执行
+        window.addEventListener('load', function() {
+            // 获取所有设置相关的DOM元素
+            const settingsIcon = document.getElementById('settingsIcon');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const transparentBg = document.getElementById('transparentBg');
+            const blurControl = document.getElementById('blurControl');
+            const blurRange = document.getElementById('blurRange');
+            const container = document.querySelector('.container');
+            const darkMode = document.getElementById('darkMode');
+            const ageFontSize = document.getElementById('ageFontSize');
+            const ageFontSizeInput = document.getElementById('ageFontSizeInput');
+            const applyFontSize = document.getElementById('applyFontSize');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const bgImageUpload = document.getElementById('bgImageUpload');
+            const resetSettings = document.getElementById('resetSettings');
+
+            // 设置面板显示/隐藏
+            settingsIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                settingsPanel.classList.toggle('show');
+            });
+
+            // 点击外部关闭设置面板
+            document.addEventListener('click', function(e) {
+                if (!settingsPanel.contains(e.target) && e.target !== settingsIcon) {
+                    settingsPanel.classList.remove('show');
+                }
+            });
+
+            // 字体大小控制
+            ageFontSize.addEventListener('input', function(e) {
+                ageFontSizeInput.value = e.target.value;
+                updateExactAgeFontSize();
+            });
+
+            ageFontSizeInput.addEventListener('input', function(e) {
+                let value = parseInt(e.target.value);
+                if (value < 16) value = 16;
+                if (value > 51) value = 51;
+                ageFontSize.value = value;
+                updateExactAgeFontSize();
+            });
+
+            applyFontSize.addEventListener('click', updateExactAgeFontSize);
+
+            // 背景透明度控制
+            transparentBg.addEventListener('change', function() {
+                if (this.checked) {
+                    blurControl.classList.add('show');
+                } else {
+                    blurControl.classList.remove('show');
+                }
+                updateBlur();
+            });
+
+            // 模糊效果控制
+            blurRange.addEventListener('input', updateBlur);
+
+            // 背景图片上传
+            uploadBtn.addEventListener('click', function() {
+                bgImageUpload.click();
+            });
+
+            bgImageUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.body.style.backgroundImage = `url(${e.target.result})`;
+                        localStorage.setItem('backgroundImage', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 深色模式控制
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                darkMode.checked = true;
+            }
+
+            darkMode.addEventListener('change', function() {
+                if (this.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('darkMode', 'false');
+                }
+            });
+
+            // 重置设置
+            resetSettings.addEventListener('click', function() {
+                // 重置背景图片
+                document.body.style.backgroundImage = 'none';
+                localStorage.removeItem('backgroundImage');
+
+                // 重置字体大小
+                ageFontSize.value = 24;
+                ageFontSizeInput.value = 24;
+                updateExactAgeFontSize();
+
+                // 重置透明度和模糊效果
+                transparentBg.checked = false;
+                container.classList.remove('transparent');
+                blurControl.classList.remove('show');
+                container.style.backdropFilter = 'none';
+                container.style.webkitBackdropFilter = 'none';
+                blurRange.value = 10;
+
+                // 重置深色模式
+                document.documentElement.removeAttribute('data-theme');
+                darkMode.checked = false;
+                localStorage.setItem('darkMode', 'false');
+            });
+
+            // 恢复保存的背景图片
+            const savedBgImage = localStorage.getItem('backgroundImage');
+            if (savedBgImage) {
+                document.body.style.backgroundImage = `url(${savedBgImage})`;
+            }
+        });
+
+        // 更新字体大小的函数
+        function updateExactAgeFontSize() {
+            const fontSize = document.getElementById('ageFontSize').value;
+            const exactAgeSpans = document.querySelectorAll('#exactAge span');
+            exactAgeSpans.forEach(span => {
+                span.style.fontSize = `${fontSize}px`;
+            });
+        }
+
+        // 更新模糊效果的函数
+        function updateBlur() {
+            const container = document.querySelector('.container');
+            const blurRange = document.getElementById('blurRange');
+            const transparentBg = document.getElementById('transparentBg');
+            
+            if (transparentBg.checked) {
+                container.classList.add('transparent');
+                container.style.background = 'var(--bg-color-transparent)';
+                container.style.backdropFilter = `blur(${blurRange.value}px)`;
+                container.style.webkitBackdropFilter = `blur(${blurRange.value}px)`;
+            } else {
+                container.classList.remove('transparent');
+                container.style.background = 'var(--bg-color)';
+                container.style.backdropFilter = 'none';
+                container.style.webkitBackdropFilter = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

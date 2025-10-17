@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bin | 主页</title>
-    <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Bin | 工具集</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🛠️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --theme-color: #3498db;
             --theme-color-rgb: 52, 152, 219;
-            /* 添加所有需要过渡的属性 */
-            transition: --theme-color 0.3s ease, --theme-color-rgb 0.3s ease;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        /* 添加全局过渡效果 */
         * {
+            box-sizing: border-box;
             transition: background-color 0.3s ease,
                         border-color 0.3s ease,
                         box-shadow 0.3s ease,
@@ -26,10 +26,9 @@
         body, html {
             height: 100%;
             margin: 0;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             color: #333;
-            transition: all 0.5s ease;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -37,30 +36,45 @@
 
         .header-container {
             text-align: center;
-            padding: 50px 20px;
+            padding: 60px 20px;
             background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                var(--theme-color) 0%, 
+                rgba(var(--theme-color-rgb), 0.3) 50%, 
+                var(--theme-color) 100%);
+            opacity: 0.7;
         }
 
         .profile-pic {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             overflow: hidden;
             position: relative;
-            margin: auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            transition: all 0.5s ease;
+            margin: 0 auto 20px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
             border: 4px solid white;
         }
 
         .profile-pic:hover {
             transform: scale(1.05) rotate(5deg);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .profile-pic img {
@@ -70,180 +84,180 @@
             transition: transform 0.5s ease;
         }
 
-        .profile-pic:hover img {
-            transform: scale(1.1);
-        }
-
         .title {
-            margin: 25px 0;
-            font-size: 2.5em;
+            font-size: 2.8em;
             color: #2c3e50;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            font-weight: bold;
-            letter-spacing: 2px;
-            transition: all 0.5s ease;
+            text-shadow: var(--text-shadow);
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin: 20px 0;
         }
 
         .subtitle {
             width: 80%;
             max-width: 600px;
-            margin: 15px auto;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
-            transition: background 0.3s ease;
+            margin: 20px auto;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--theme-color), 
+                transparent);
+            border-radius: 2px;
         }
 
         .button-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
             padding: 40px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            animation: fadeIn 0.5s ease-in-out;
-            flex: 1;
-            width: calc(100% - 80px);
+            width: 100%;
             perspective: 1000px;
         }
 
         .button {
-            padding: 20px 30px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: 22px 30px;
+            background: rgba(255, 255, 255, 0.95);
             color: #2c3e50;
             text-decoration: none;
-            border-radius: 15px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        background-color 0.3s ease,
-                        border-color 0.3s ease,
-                        box-shadow 0.3s ease;
+            border-radius: 16px;
+            transition: var(--transition);
             text-align: center;
-            box-shadow: 0 4px 15px rgba(var(--theme-color-rgb), 0.1);
+            box-shadow: 0 4px 15px rgba(var(--theme-color-rgb), 0.08);
             backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid var(--theme-color);
+            border: 2px solid transparent;
+            border-color: rgba(var(--theme-color-rgb), 0.2);
             font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin: 5px;
+            gap: 12px;
             position: relative;
-            transform-style: preserve-3d;
+            overflow: hidden;
         }
 
-        .button i {
-            font-size: 1.2em;
+        .button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background-color: rgba(var(--theme-color-rgb), 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.6s, opacity 0.6s;
         }
 
         .button:hover {
-            transform: translateY(-5px) rotateX(5deg);
-            box-shadow: 0 15px 35px rgba(var(--theme-color-rgb), 0.2);
+            transform: translateY(-5px) rotateX(2deg);
+            box-shadow: 0 15px 30px rgba(var(--theme-color-rgb), 0.15);
             background: var(--theme-color);
             color: white;
+            border-color: transparent;
         }
 
-        @media (max-width: 768px) {
-            .button-container {
-                padding: 15px;
-                gap: 15px;
-            }
-
-            .button {
-                padding: 15px;
-                font-size: 0.9em;
-            }
-
-            .tooltip {
-                display: none;
-            }
-
-            .theme-color-picker {
-                bottom: 10px;
-                right: 10px;
-                transform: scale(0.8);
-            }
-
-            .button:active {
-                transform: scale(0.95);
-                transition: transform 0.1s;
-            }
+        .button:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
 
-        @media (max-width: 480px) {
-            .button-container {
-                grid-template-columns: 1fr;
-            }
+        .button i {
+            font-size: 1.3em;
+            transition: transform 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .button:hover i {
+            transform: scale(1.1) rotate(5deg);
         }
 
-        .theme-toggle {
+        .tooltip {
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .button:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            bottom: 120%;
+        }
+
+        .tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(var(--theme-color-rgb), 0.15);
+            color: inherit;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-controls {
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
         }
 
-        .theme-button {
+        .palette-button, .theme-button {
             background: transparent;
             border: none;
             cursor: pointer;
             font-size: 1.5em;
             color: #2c3e50;
             padding: 10px;
-            transition: all 0.5s ease;
+            transition: var(--transition);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .theme-button:hover {
-            transform: rotate(30deg);
+        .palette-button:hover, .theme-button:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: rotate(15deg);
         }
 
-        /* 修改深色模式样式的实现方式 */
         [data-theme="dark"] {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
-            color: #fff;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            color: #e0e0e0;
         }
 
         [data-theme="dark"] .header-container {
-            background: rgba(0, 0, 0, 0.5);
-            margin-bottom: 0;
-        }
-
-        [data-theme="dark"] .button-container {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
-            margin-top: 0;
-            padding-top: 0;
+            background: rgba(0, 0, 0, 0.6);
         }
 
         [data-theme="dark"] .button {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            border-color: var(--theme-color);
-        }
-
-        [data-theme="dark"] .theme-button {
-            color: #fff;
-        }
-
-        [data-theme="dark"] .title {
-            color: #fff;
-        }
-
-        [data-theme="dark"] .button:hover {
-            background: var(--theme-color);
-            color: white;
-        }
-
-        [data-theme="dark"] .profile-pic {
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        [data-theme="light"] {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            color: #333;
+        [data-theme="dark"] .palette-button, 
+        [data-theme="dark"] .theme-button {
+            color: #fff;
         }
 
         .back-button {
@@ -259,200 +273,77 @@
             font-size: 1.5em;
             color: #2c3e50;
             padding: 10px;
-            transition: all 0.5s ease;
-            text-decoration: none;
+            transition: var(--transition);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .nav-button:hover {
+            background: rgba(0, 0, 0, 0.05);
             transform: translateX(-5px);
         }
 
-        /* 添加深色模式下的返回按钮样式 */
         [data-theme="dark"] .nav-button {
             color: #fff;
         }
 
-        /* 添加工具提示样式 */
-        .tooltip {
+        /* 颜色选择器优化 */
+        .theme-color-picker {
+            display: none;
             position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 12px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 6px;
-            font-size: 14px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            width: max-content;
-            max-width: 200px;
-            z-index: 100;
-        }
-
-        .button:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-            bottom: 110%;
-        }
-
-        /* 添加标签样式 */
-        .tag {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 12px;
-            padding: 3px 6px;
-            border-radius: 4px;
-            background: rgba(var(--theme-color-rgb), 0.2);
-            color: inherit;
-            transition: background-color 0.3s ease;
-        }
-
-        /* 修改主题切换按钮容器样式 */
-        .theme-controls {
-            position: absolute;
-            top: 20px;
+            top: 60px;
             right: 20px;
-            display: flex;
-            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            z-index: 1000;
             gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            width: 280px;
         }
 
-        /* 添加回颜色选项的样式 */
+        .theme-color-picker.show {
+            display: grid;
+        }
+
         .color-option {
-            width: 25px;
-            height: 25px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             transition: all 0.3s ease;
             position: relative;
         }
 
         .color-option.active {
-            border-color: var(--theme-color);
+            border-color: white;
             transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(var(--theme-color-rgb), 0.5);
         }
 
-        /* 确保主题色选择器的显示和隐藏样式正确 */
-        .theme-color-picker {
-            display: none;  /* 默认隐藏 */
-            position: absolute;
-            top: 50%;
-            right: 100%;  /* 改为100%，使其显示在左边 */
-            transform: translateY(-50%);  /* 垂直居中 */
-            background: white;
-            padding: 5px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-right: 5px;  /* 改为margin-right，给右边留间距 */
-            gap: 5px;
-            z-index: 1000;
-        }
-
-        .theme-color-picker.show {
-            display: flex;  /* 显示时改为flex布局 */
-        }
-
-        [data-theme="dark"] .theme-color-picker {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        /* 添加调色盘按钮样式 */
-        .palette-button {
-            position: relative;  /* 添加这行，确保颜色选择器相对于按钮定位 */
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #2c3e50;
-            padding: 10px;
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .palette-button {
-            color: #fff;
-        }
-
-        .palette-button:hover {
-            transform: rotate(30deg);
-        }
-
-        /* 添加更多颜色按钮样式 */
         .more-colors {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid var(--theme-color);
-            transition: all 0.3s ease;
+            grid-column: 4;
             position: relative;
-            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 5px;  /* 添加左边距 */
         }
 
-        .more-colors:hover {
-            transform: scale(1.1);
-            border-color: var(--theme-color);
-            box-shadow: 0 0 10px rgba(var(--theme-color-rgb), 0.3);
-        }
-
-        /* 颜色选择器输入框样式 */
-        .color-picker-wrapper {
-            position: absolute;
-            top: 0;
-            right: 100%;
-            margin-right: 5px;
-            display: none;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1001;  /* 确保在最上层 */
-        }
-
-        [data-theme="dark"] .color-picker-wrapper {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .color-picker-input {
-            width: 50px;
-            height: 50px;
-            padding: 0;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .color-picker-input::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-
-        .color-picker-input::-webkit-color-swatch {
-            border: none;
-            border-radius: 50%;
-        }
-
-        /* 色轮选择器样式 */
         .color-wheel-wrapper {
-            position: absolute;
-            top: 0;
-            right: 100%;
-            margin-right: 10px;
             display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
             background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
             z-index: 1001;
         }
 
@@ -461,8 +352,8 @@
         }
 
         .color-wheel {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             position: relative;
             background: conic-gradient(
@@ -475,7 +366,7 @@
             width: 20px;
             height: 20px;
             background: white;
-            border: 2px solid white;
+            border: 2px solid #333;
             border-radius: 50%;
             position: absolute;
             top: 50%;
@@ -485,15 +376,10 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        [data-theme="dark"] .color-wheel-wrapper {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        /* 添加颜色预览框样式 */
         .color-preview-container {
             display: flex;
             align-items: center;
-            margin-top: 10px;
+            margin-top: 15px;
             gap: 10px;
         }
 
@@ -501,29 +387,90 @@
             width: 40px;
             height: 40px;
             border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
         }
 
         .color-value {
             font-size: 14px;
             color: #666;
             font-family: monospace;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 8px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 5px 10px;
             border-radius: 4px;
+        }
+
+        [data-theme="dark"] .theme-color-picker,
+        [data-theme="dark"] .color-wheel-wrapper {
+            background: rgba(30, 30, 30, 0.95);
+            color: #fff;
         }
 
         [data-theme="dark"] .color-value {
             color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 动画优化 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-container {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .button-container {
+            animation: fadeIn 1s ease-out 0.2s both;
+        }
+
+        /* 响应式优化 */
+        @media (max-width: 768px) {
+            .button-container {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                padding: 20px;
+                gap: 15px;
+            }
+
+            .button {
+                padding: 15px;
+                font-size: 0.9em;
+            }
+
+            .title {
+                font-size: 2.2em;
+            }
+
+            .theme-color-picker {
+                right: 10px;
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .button-container {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-controls {
+                top: 15px;
+                right: 15px;
+                gap: 10px;
+            }
+
+            .palette-button, .theme-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header-container">
         <div class="back-button">
-            <a href="https://binzaiawa.github.io/Welcome/Welcome.html" class="nav-button">
+            <a href="https://binzaiawa.github.io/index.html" class="nav-button">
                 <i class="fas fa-chevron-left"></i>
             </a>
         </div>
@@ -536,15 +483,19 @@
                 <div class="color-option" data-color="#e74c3c" style="background: #e74c3c"></div>
                 <div class="color-option" data-color="#2ecc71" style="background: #2ecc71"></div>
                 <div class="color-option" data-color="#9b59b6" style="background: #9b59b6"></div>
+                <div class="color-option" data-color="#f1c40f" style="background: #f1c40f"></div>
+                <div class="color-option" data-color="#1abc9c" style="background: #1abc9c"></div>
+                <div class="color-option" data-color="#34495e" style="background: #34495e"></div>
                 <div class="more-colors" id="moreColors">
-                    <div class="color-wheel-wrapper">
-                        <div class="color-wheel" id="colorWheel">
-                            <div class="color-picker-handle" id="colorHandle"></div>
-                        </div>
-                        <div class="color-preview-container">
-                            <div class="color-preview" id="colorPreview"></div>
-                            <div class="color-value" id="colorValue"></div>
-                        </div>
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <div class="color-wheel-wrapper">
+                    <div class="color-wheel" id="colorWheel">
+                        <div class="color-picker-handle" id="colorHandle"></div>
+                    </div>
+                    <div class="color-preview-container">
+                        <div class="color-preview" id="colorPreview"></div>
+                        <div class="color-value" id="colorValue">#3498db</div>
                     </div>
                 </div>
             </div>
@@ -572,155 +523,106 @@
         </a>
         <a href="https://ol.woobx.cn/tool/" class="button">
             <i class="fas fa-box-open"></i>一个木函
-            <div class="tooltip">一个木函</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">一个木函</span>
+            <span class="tag">工具</span>
         </a>
         <a href="https://www.baidu.com/" class="button">
             <i class="fas fa-search"></i>百度
-            <div class="tooltip">百度</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">百度</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Age.html" class="button">
             <i class="fas fa-calendar-alt"></i>年龄计算器
-            <div class="tooltip">年龄计算器</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">年龄计算器</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Birthday.html" class="button">
             <i class="fas fa-birthday-cake"></i>我的生日
-            <div class="tooltip">我的生日</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">作者的生日倒计时！</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Timer.html" class="button">
             <i class="fas fa-hourglass-start"></i>倒计时
-            <div class="tooltip">倒计时</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">倒计时</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Clock-white.html" class="button">
             <i class="far fa-clock"></i>简洁时钟 · 白
-            <div class="tooltip">简洁时钟 · 白</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">简洁时钟 · 白</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Clock-black.html" class="button">
             <i class="fas fa-clock"></i>简洁时钟 · 黑
-            <div class="tooltip">简洁时钟 · 黑</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">简洁时钟 · 黑</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Timer.html" class="button">
             <i class="fas fa-stopwatch"></i>计时器
-            <div class="tooltip">计时器</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">计时器</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/MSDM EJZHS.html" class="button">
             <i class="fas fa-exchange-alt"></i>摩斯电码和进制换算
-            <div class="tooltip">摩斯电码和进制换算</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">摩斯电码和进制换算</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Random.html" class="button">
             <i class="fas fa-random"></i>随机抽取器
-            <div class="tooltip">随机抽取器</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">随机抽取器</span>
+            <span class="tag">工具</span>
         </a>
         <a href="./tools/Life-grid.html" class="button">
             <i class="fas fa-table"></i>人生小格
-            <div class="tooltip">人生小格</div>
-            <div class="tag">工具</div>
+            <span class="tooltip">人生小格</span>
+            <span class="tag">工具</span>
         </a>
-        <a href="./tools/LOVE.html" class="button">
-            <i class="fas fa-heart"></i>LOVE恋人
-            <div class="tooltip">LOVE恋人</div>
-            <div class="tag">工具</div>
+        <a href="./rizhi/main.html" class="button">
+            <i class="fas fa-cloud"></i>资源分享网盘
+            <span class="tooltip">密码：彬哥</span>
+            <span class="tag">工具</span>
         </a>
+        <a href="./cloud/main.html" class="button">
+            <i class="fas fa-book"></i>更新日志（实验性功能）
+            <span class="tooltip">网站的更新日志（实验性功能）</span>
+            <span class="tag">日志</span>
+        </a>
+
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 使用 IntersectionObserver 实现按钮懒加载
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-
-            document.querySelectorAll('.button').forEach(button => {
-                button.style.opacity = '0';
-                button.style.transform = 'translateY(20px)';
-                observer.observe(button);
-                
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const href = this.getAttribute('href');
-                    
-                    // 添加点击动画
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 100);
-
-                    // 页面淡出效果
-                    document.body.style.opacity = '0';
-                    setTimeout(() => {
-                        if (this.id === 'backButton') {
-                            window.open(href, '_self');
-                            setTimeout(() => {
-                                window.close();
-                            }, 100);
-                        } else {
-                            window.open(href, '_blank');
-                        }
-                        document.body.style.opacity = '1';
-                    }, 300);
-                });
-            });
-
-            // 修改主题切换功能
+            // 主题切换
             const themeToggle = document.getElementById('themeToggle');
             const icon = themeToggle.querySelector('i');
-            
-            // 从 localStorage 读取之前保存的主题设置
             const currentTheme = localStorage.getItem('theme') || 'light';
             document.body.setAttribute('data-theme', currentTheme);
-            updateThemeIcon(currentTheme);
-
+            icon.className = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            
             themeToggle.addEventListener('click', () => {
-                const currentTheme = document.body.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
+                const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
                 document.body.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);  // 保存主题设置到 localStorage
-                updateThemeIcon(newTheme);
+                localStorage.setItem('theme', newTheme);
+                icon.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
             });
 
-            function updateThemeIcon(theme) {
-                icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-            }
-
-            // 主题色切换
-            const colorOptions = document.querySelectorAll('.color-option');
-            const root = document.documentElement;
+            // 调色盘功能
             const paletteToggle = document.getElementById('paletteToggle');
             const themeColorPicker = document.querySelector('.theme-color-picker');
             const moreColors = document.getElementById('moreColors');
             const wheelWrapper = document.querySelector('.color-wheel-wrapper');
-            const colorWheel = document.getElementById('colorWheel');
-            const colorHandle = document.getElementById('colorHandle');
             
-            // 从localStorage获取保存的主题色
-            const savedColor = localStorage.getItem('themeColor') || '#3498db';
-            setThemeColor(savedColor);
-
-            // 调色盘按钮点击事件
-            paletteToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                themeColorPicker.classList.toggle('show');
-                wheelWrapper.classList.remove('show');  // 关闭色轮
-            });
-
-            // 预设颜色选项点击事件
-            colorOptions.forEach(option => {
+            // 确保元素存在后再添加事件
+            if (paletteToggle) {
+                paletteToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    themeColorPicker.classList.toggle('show');
+                    wheelWrapper.classList.remove('show');
+                });
+            }
+            
+            // 颜色选项点击
+            document.querySelectorAll('.color-option').forEach(option => {
                 option.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const color = option.dataset.color;
@@ -729,110 +631,118 @@
                     themeColorPicker.classList.remove('show');
                 });
             });
-
-            // 色轮选择器功能
-            moreColors.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                wheelWrapper.classList.toggle('show');
-                e.stopPropagation();
-            });
-
-            // 阻止色轮内部点击事件冒泡
-            wheelWrapper.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-
-            // 色轮选择器功能
-            let isDragging = false;
-
-            colorHandle.addEventListener('mousedown', function(e) {
-                isDragging = true;
-                updateColor(e);
-            });
-
-            document.addEventListener('mousemove', function(e) {
-                if (isDragging) {
-                    updateColor(e);
-                }
-            });
-
-            document.addEventListener('mouseup', function() {
-                isDragging = false;
-            });
-
-            function updateColor(e) {
-                const wheelRect = colorWheel.getBoundingClientRect();
-                const wheelCenterX = wheelRect.left + wheelRect.width / 2;
-                const wheelCenterY = wheelRect.top + wheelRect.height / 2;
+            
+            // 色轮功能
+            if (moreColors && wheelWrapper) {
+                moreColors.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    wheelWrapper.classList.toggle('show');
+                });
                 
-                let x = e.clientX - wheelCenterX;
-                let y = e.clientY - wheelCenterY;
-                
-                // 计算距离中心的距离
-                const distance = Math.sqrt(x * x + y * y);
-                const radius = wheelRect.width / 2;
-                
-                // 如果超出圆形范围，调整位置
-                if (distance > radius) {
-                    const angle = Math.atan2(y, x);
-                    x = Math.cos(angle) * radius;
-                    y = Math.sin(angle) * radius;
-                }
-                
-                // 更新手柄位置
-                colorHandle.style.transform = `translate(${x}px, ${y}px)`;
-                
-                // 计算颜色
-                const hue = (Math.atan2(y, x) * 180 / Math.PI + 180) % 360;
-                const saturation = Math.min(100, (distance / radius) * 100);
-                const color = HSLToHex(hue, saturation, 50);
-                
-                // 更新预览
+                // 色轮拖动功能
+                const colorWheel = document.getElementById('colorWheel');
+                const colorHandle = document.getElementById('colorHandle');
                 const colorPreview = document.getElementById('colorPreview');
                 const colorValue = document.getElementById('colorValue');
-                colorPreview.style.backgroundColor = color;
-                colorValue.textContent = color.toUpperCase();
                 
-                // 更新主题色
-                setThemeColor(color);
-                localStorage.setItem('themeColor', color);
-            }
-
-            // HSL转HEX
-            function HSLToHex(h, s, l) {
-                s /= 100;
-                l /= 100;
-                const k = n => (n + h / 30) % 12;
-                const a = s * Math.min(l, 1 - l);
-                const f = n =>
-                    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-                return "#" + [0, 8, 4].map(n => {
-                    const rgb = Math.round(255 * f(n));
-                    return rgb.toString(16).padStart(2, '0');
-                }).join('');
-            }
-
-            // 添加触摸支持
-            colorHandle.addEventListener('touchstart', function(e) {
-                isDragging = true;
-                updateColor(e.touches[0]);
-            });
-
-            document.addEventListener('touchmove', function(e) {
-                if (isDragging) {
-                    e.preventDefault();  // 防止页面滚动
-                    updateColor(e.touches[0]);
+                let isDragging = false;
+                
+                // 鼠标事件
+                colorHandle.addEventListener('mousedown', startDrag);
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', endDrag);
+                
+                // 触摸事件
+                colorHandle.addEventListener('touchstart', startDrag);
+                document.addEventListener('touchmove', drag);
+                document.addEventListener('touchend', endDrag);
+                
+                function startDrag(e) {
+                    isDragging = true;
+                    updateColor(e.touches ? e.touches[0] : e);
+                    e.preventDefault();
                 }
-            });
-
-            document.addEventListener('touchend', function() {
-                isDragging = false;
-            });
-
-            // 点击其他地方关闭所有选择器
+                
+                function drag(e) {
+                    if (isDragging) {
+                        updateColor(e.touches ? e.touches[0] : e);
+                        e.preventDefault();
+                    }
+                }
+                
+                function endDrag() {
+                    isDragging = false;
+                }
+                
+                function updateColor(e) {
+                    const wheelRect = colorWheel.getBoundingClientRect();
+                    const wheelCenterX = wheelRect.left + wheelRect.width / 2;
+                    const wheelCenterY = wheelRect.top + wheelRect.height / 2;
+                    
+                    // 获取鼠标/触摸位置
+                    let x = (e.clientX || e.touches[0].clientX) - wheelCenterX;
+                    let y = (e.clientY || e.touches[0].clientY) - wheelCenterY;
+                    
+                    const radius = wheelRect.width / 2;
+                    const distance = Math.min(radius, Math.sqrt(x * x + y * y));
+                    const angle = Math.atan2(y, x);
+                    
+                    // 更新手柄位置
+                    colorHandle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    
+                    // 计算HSL颜色
+                    const hue = (angle * 180 / Math.PI + 180) % 360;
+                    const saturation = (distance / radius) * 100;
+                    const color = HSLToHex(hue, saturation, 60);
+                    
+                    // 更新预览
+                    colorPreview.style.backgroundColor = color;
+                    colorValue.textContent = color.toUpperCase();
+                    
+                    // 更新主题色
+                    setThemeColor(color);
+                    localStorage.setItem('themeColor', color);
+                }
+                
+                // HSL转HEX
+                function HSLToHex(h, s, l) {
+                    l /= 100;
+                    const k = n => (n + h / 30) % 12;
+                    const a = s * Math.min(l, 1 - l) / 100;
+                    const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+                    return "#" + [0, 8, 4].map(n => {
+                        const rgb = Math.round(255 * f(n));
+                        return rgb.toString(16).padStart(2, '0');
+                    }).join('');
+                }
+            }
+            
+            // 设置主题色函数
+            function setThemeColor(color) {
+                const root = document.documentElement;
+                const rgb = hexToRgb(color);
+                root.style.setProperty('--theme-color', color);
+                root.style.setProperty('--theme-color-rgb', rgb);
+                
+                // 更新预设颜色选项的激活状态
+                document.querySelectorAll('.color-option').forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.color === color);
+                });
+            }
+            
+            // HEX转RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` 
+                    : null;
+            }
+            
+            // 点击其他区域关闭选择器
             document.addEventListener('click', function(e) {
-                if (!paletteToggle.contains(e.target) && 
+                if (paletteToggle && themeColorPicker && 
+                    !paletteToggle.contains(e.target) && 
                     !themeColorPicker.contains(e.target) &&
                     !moreColors.contains(e.target) &&
                     !wheelWrapper.contains(e.target)) {
@@ -840,48 +750,20 @@
                     wheelWrapper.classList.remove('show');
                 }
             });
-
-            // 阻止颜色选择器内部点击事件冒泡
-            themeColorPicker.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-
-            function setThemeColor(color) {
-                const rgb = hexToRgb(color);
-                root.style.setProperty('--theme-color', color);
-                root.style.setProperty('--theme-color-rgb', rgb);
-                colorOptions.forEach(opt => {
-                    opt.classList.toggle('active', opt.dataset.color === color);
-                });
-            }
-
-            function hexToRgb(hex) {
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? 
-                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` 
-                    : null;
-            }
-
-            // 添加页面进入动画
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-                document.body.style.transform = 'translateY(0)';
-            }, 100);
-
-            // 移动端优化
-            if ('ontouchstart' in window) {
-                document.querySelectorAll('.button').forEach(button => {
-                    button.addEventListener('touchstart', function() {
-                        this.style.transform = 'scale(0.95)';
-                    });
-
-                    button.addEventListener('touchend', function() {
-                        this.style.transform = '';
-                    });
-                });
+            
+            // 初始化颜色选择器
+            // 尝试从本地存储获取颜色
+            const savedColor = localStorage.getItem('themeColor') || '#3498db';
+            setThemeColor(savedColor);
+            
+            // 初始化色轮位置
+            if (colorWheel && colorHandle) {
+                const wheelRect = colorWheel.getBoundingClientRect();
+                const radius = wheelRect.width / 2;
+                // 默认位置在圆心
+                colorHandle.style.transform = `translate(0, 0)`;
             }
         });
     </script>
 </body>
-</html> 
+</html>

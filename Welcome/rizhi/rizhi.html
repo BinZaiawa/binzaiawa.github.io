@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能日志查看器</title>
+    <style>
+        :root {
+            --primary: #00c6ff;
+            --secondary: #0072ff;
+            --background: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--background), #1e293b);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .clock-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        #clock {
+            font-size: 4.5rem;
+            font-weight: 300;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 1rem 0;
+            font-family: 'Consolas', monospace;
+        }
+
+        .date {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .log-display {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: pre-wrap;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .loading {
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="clock-card">
+            <div class="date" id="date"></div>
+            <div id="clock">00:00:00</div>
+        </div>
+
+        <div class="log-display" id="logContent">
+            <div class="loading">加载日志中...</div>
+        </div>
+    </div>
+
+    <script>
+        // 实时时钟实现
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('clock').textContent = timeStr;
+            
+            // 更新日期
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long' 
+            };
+            document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', options);
+        }
+
+        // 初始化时钟
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 日志加载实现
+        async function loadLogFile() {
+            try {
+                // 注意：此方法仅适用于以下环境：
+                // 1. 通过本地服务器（如VSCode Live Server）访问
+                // 2. 文件与网页放在同一目录下
+                const response = await fetch('rizhi.txt');
+                const text = await response.text();
+                document.getElementById('logContent').textContent = text || '日志文件为空';
+            } catch (error) {
+                document.getElementById('logContent').innerHTML = `
+                    <span style="color: #f87171">
+                        错误：无法加载日志文件
+                        <br>
+                        请确保：
+                        <br>1. 文件命名为 rizhi.txt
+                        <br>2. 与网页文件放在同一目录
+                        <br>3. 通过本地服务器访问
+                    </span>
+                `;
+            }
+        }
+
+        // 页面加载后自动加载日志
+        window.addEventListener('DOMContentLoaded', loadLogFile);
+    </script>
+</body>
+</html>

@@ -6,26 +6,32 @@
     <title>欢迎页面</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        @font-face {
+            font-family: 'BaoFont';
+            src: url('./Welcome/font/Baofont.ttf') format('truetype');
+            font-display: swap;
+        }
+
         body {
-            background: url('./Welcome/img/Wallpaper/1.png');  /* 修改默认壁纸路径 */
+            background: url('./Welcome/img/Wallpaper/1.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            min-height: 100vh;  /* 改用 min-height 而不是 height */
+            min-height: 100vh;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'Arial', sans-serif;
+            font-family: 'BaoFont', sans-serif;
             color: white;
             transition: background 0.5s ease, background-image 0.5s ease, backdrop-filter 0.3s ease;
-            overflow: hidden;  /* 禁用滚动 */
+            overflow: hidden;
         }
 
         .clock {
-            font-size: 12rem;  /* 从8rem改为12rem */
+            font-size: 12rem;
             font-weight: bold;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -36,11 +42,11 @@
             letter-spacing: 5px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
-            position: relative;  /* 添加相对定位 */
-            z-index: 1;         /* 确保时钟在背景之上 */
+            position: relative;
+            z-index: 1;
+            font-family: 'BaoFont', sans-serif;
         }
 
-        /* 添加一个伪元素来实现模糊效果 */
         .clock::before {
             content: '';
             position: absolute;
@@ -62,6 +68,7 @@
             border-radius: 10px;
             margin: 10px 0;
             transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+            font-family: 'BaoFont', sans-serif;
         }
 
         .message {
@@ -88,7 +95,7 @@
 
         @media (max-width: 480px) {
             .clock {
-                font-size: 6rem;  /* 从4rem改为6rem，适配移动端 */
+                font-size: 6rem;
                 padding: 15px 30px;
             }
 
@@ -101,7 +108,6 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        /* 设置按钮样式 */
         .settings-btn {
             position: fixed;
             top: 20px;
@@ -122,13 +128,11 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* 修复水平滚动条问题 */
         html, body {
             width: 100%;
-            overflow-x: hidden;  /* 禁用水平滚动 */
+            overflow-x: hidden;
         }
 
-        /* 修改设置面板样式 */
         .settings-panel {
             position: fixed;
             top: 80px;
@@ -141,19 +145,17 @@
             transition: right 0.5s ease, opacity 0.5s ease;
             opacity: 0;
             box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            max-height: calc(100vh - 120px);  /* 限制最大高度 */
-            overflow-y: auto;  /* 只在设置面板内允许滚动 */
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
             overflow-x: hidden;
         }
 
-        /* 确保所有内容都在视口内 */
         .clock-container, .message, .button-group {
             max-width: 100%;
-            padding: 0 20px;       /* 添加一些边距 */
-            box-sizing: border-box; /* 确保padding不会导致溢出 */
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
-        /* 美化滚动条样式 */
         .settings-panel::-webkit-scrollbar {
             width: 6px;
         }
@@ -177,11 +179,10 @@
             opacity: 1;
         }
 
-        /* 修改开关样式 */
         .switch {
             position: relative;
             display: inline-block;
-            width: 70px;  /* 保持宽度为 70px */
+            width: 70px;
             height: 34px;
             margin: 0;
         }
@@ -224,18 +225,16 @@
         }
 
         input:checked + .slider:before {
-            -webkit-transform: translateX(23px);  /* 修改为 23px */
-            -ms-transform: translateX(23px);      /* 修改为 23px */
-            transform: translateX(23px);          /* 修改为 23px */
+            -webkit-transform: translateX(23px);
+            -ms-transform: translateX(23px);
+            transform: translateX(23px);
         }
 
-        /* 滑块样式 */
         .blur-slider {
             width: 100%;
             margin: 10px 0;
         }
 
-        /* 修改设置项样式 */
         .setting-item {
             margin: 15px 0;
             padding: 5px 0;
@@ -243,25 +242,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 34px;  /* 确保至少与开关一样高 */
+            min-height: 34px;
         }
 
-        /* 设置项标题样式 */
         .setting-item span {
             font-size: 0.95rem;
             opacity: 0.9;
-            flex: 1;  /* 让标题占据剩余空间 */
-            margin-right: 15px;  /* 与控件保持间距 */
+            flex: 1;
+            margin-right: 15px;
         }
 
-        /* 滑块容器样式 */
         .slider-container {
             flex: 1;
-            max-width: 150px;  /* 限制滑块最大宽度 */
+            max-width: 150px;
             margin-left: 10px;
         }
 
-        /* 滑块样式优化 */
         input[type="range"] {
             width: 100%;
             height: 5px;
@@ -277,23 +273,20 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
 
-        /* 分组标题样式优化 */
         .settings-group-title {
             font-size: 1.1rem;
             font-weight: 500;
-            color: #2196F3;  /* 使用主题蓝色 */
+            color: #2196F3;
             margin: 20px 0 15px 0;
             padding-bottom: 8px;
             border-bottom: 2px solid rgba(33, 150, 243, 0.3);
         }
 
-        /* 添加深色模式样式 */
         body.dark-mode {
-            background: #1a1a1a !important;  /* 使用纯深色背景 */
+            background: #1a1a1a !important;
             transition: background 0.5s ease, background-image 0.5s ease;
         }
 
-        /* 深色模式下的元素样式调整 */
         .dark-mode .clock {
             background: rgba(255, 255, 255, 0.05);
         }
@@ -308,7 +301,6 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        /* 上传按钮和重置按钮的通用样式 */
         .upload-btn, .reset-btn {
             min-width: 100px;
             padding: 8px 15px;
@@ -321,8 +313,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;  /* 图标和文字之间的间距 */
-            margin-left: auto;  /* 让按钮靠右对齐 */
+            gap: 5px;
+            margin-left: auto;
+            font-family: 'BaoFont', sans-serif;
         }
 
         .upload-btn {
@@ -343,12 +336,11 @@
             transform: translateY(-1px);
         }
 
-        /* 设置项中的按钮容器样式 */
         .button-container {
             display: flex;
             justify-content: flex-end;
             flex: 1;
-            max-width: 150px;  /* 与其他控件保持一致的宽度 */
+            max-width: 150px;
         }
 
         .clock-container {
@@ -361,20 +353,14 @@
             margin-top: 10px;
             color: rgba(255, 255, 255, 0.8);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            display: none;  /* 默认隐藏日期 */
+            display: none;
+            font-family: 'BaoFont', sans-serif;
         }
 
         .date.show {
             display: block;
         }
 
-        /* 修改时钟样式以支持大小调整 */
-        .clock {
-            font-size: 12rem;  /* 从8rem改为12rem */
-            /* 其他样式保持不变 */
-        }
-
-        /* 大小滑块样式 */
         .size-slider {
             width: 100%;
             margin: 10px 0;
@@ -386,24 +372,19 @@
             }
         }
 
-        /* 添加背景过渡动画 */
         body {
-            /* 其他样式保持不变 */
             transition: background 0.5s ease, background-image 0.5s ease;
         }
 
-        /* 修改深色模式过渡 */
         body.dark-mode {
             background: #1a1a1a !important;
             transition: background 0.5s ease, background-image 0.5s ease;
         }
 
-        /* 添加其他元素的过渡效果 */
         .clock, .message, .enter-btn, .settings-btn, .settings-panel {
             transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
         }
 
-        /* 深色模式下元素的过渡 */
         .dark-mode .clock,
         .dark-mode .message,
         .dark-mode .enter-btn,
@@ -412,7 +393,6 @@
             transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
         }
 
-        /* 修改过渡动画相关的样式 */
         body::before {
             content: '';
             position: fixed;
@@ -429,17 +409,14 @@
             transform: translateX(100%);
         }
 
-        /* 修改深色模式样式 */
         body.dark-mode {
             background: none !important;
         }
 
-        /* 确保内容在动画期间可见 */
         .clock-container, .message, .enter-btn, .settings-btn, .settings-panel {
             z-index: 1;
         }
 
-        /* 添加设置按钮动画 */
         .settings-btn {
             transition: transform 0.5s ease, background 0.3s ease;
         }
@@ -451,7 +428,7 @@
 
         .button-group {
             display: flex;
-            gap: 20px;  /* 按钮之间的间距 */
+            gap: 20px;
             justify-content: center;
             align-items: center;
         }
@@ -473,7 +450,6 @@
             transform: translateY(-2px);
         }
 
-        /* 添加隐藏动画效果 */
         .button-group {
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
@@ -488,7 +464,6 @@
             visibility: hidden;
         }
 
-        /* 精简模式样式 */
         body.minimal-mode .message,
         body.minimal-mode .button-group {
             display: none;
@@ -501,10 +476,10 @@
 </head>
 <body>
     <div class="clock-container">
-    <div class="clock" id="clock">20:58:23</div>
+        <div class="clock" id="clock">20:58:23</div>
         <div class="date" id="date">2024年3月14日 星期四</div>
     </div>
-    <div class="message">晚上好！辛苦一天了好好休息一下吧 😊</div>
+    <div class="message">晚上好！辛苦一天了好好休息一下吧 </div>
     <div class="button-group">
         <a href="./Welcome/Welcome.html" class="enter-btn">进入主页</a>
         <a href="https://binzaiawa.github.io/Welcome/page.html" class="enter-btn">进入工具箱</a>
@@ -636,10 +611,8 @@
             localStorage.setItem('clockSize', size);
         }
 
-        // 页面加载时检查并应用   存的设置
+        // 页面加载时检查并应用保存的设置
         document.addEventListener('DOMContentLoaded', () => {
-            // 现有的加载代码...
-
             // 加载时钟格式设置
             const saved24Hour = localStorage.getItem('is24Hour');
             if (saved24Hour !== null) {
@@ -696,7 +669,7 @@
                 const savedWallpaper = localStorage.getItem('currentWallpaper');
                 if (savedWallpaper) {
                     // 使用保存的壁纸
-                    document.body.style.backgroundImage = `url('./Welcome/img/Wallpaper/${savedWallpaper}.png')`;  // 修改壁纸路径
+                    document.body.style.backgroundImage = `url('./Welcome/img/Wallpaper/${savedWallpaper}.png')`;
                 } else {
                     // 随机选择一张新壁纸
                     setRandomWallpaper();
@@ -716,15 +689,15 @@
             let greeting;
 
             if (hour >= 5 && hour < 12) {
-                greeting = '早上好！开启充满希望的一天 😊';
+                greeting = '早上好！开启充满希望的一天 ';
             } else if (hour >= 12 && hour < 14) {
-                greeting = '中午好！休息一下吧 😊';
+                greeting = '中午好！休息一下吧 ';
             } else if (hour >= 14 && hour < 18) {
-                greeting = '下午好！继续加油 😊';
+                greeting = '下午好！继续加油 ';
             } else if (hour >= 18 && hour < 22) {
-                greeting = '晚上好！辛苦一天了好好休息一下吧 😊';
+                greeting = '晚上好！辛苦一天了好好休息一下吧 ';
             } else {
-                greeting = '夜深了，该休息了 😴';
+                greeting = '夜深了，该休息了 ';
             }
 
             messageElement.textContent = greeting;
@@ -735,7 +708,6 @@
         // 每小时更新一次问候语
         setInterval(updateGreeting, 3600000);
 
-        // 添加新的 JavaScript 函数
         function toggleSettings() {
             const panel = document.getElementById('settingsPanel');
             const btn = document.querySelector('.settings-btn');
@@ -758,27 +730,21 @@
             }
         }
 
-        // 修改壁纸总数
-        const WALLPAPER_COUNT = 4;  // 实际有4张壁纸
+        const WALLPAPER_COUNT = 4;
 
-        // 修改随机选择壁纸的函数
         function setRandomWallpaper() {
-            // 获取当前壁纸编号
             const currentWallpaper = localStorage.getItem('currentWallpaper');
             let randomNum;
 
-            // 确保新选择的壁纸与当前的不同
             do {
                 randomNum = Math.floor(Math.random() * WALLPAPER_COUNT) + 1;
             } while (randomNum === parseInt(currentWallpaper));
 
             const wallpaperPath = `./Welcome/img/Wallpaper/${randomNum}.png`;
             document.body.style.backgroundImage = `url('${wallpaperPath}')`;
-            // 保存当前壁纸编号
             localStorage.setItem('currentWallpaper', randomNum);
         }
 
-        // 重置背景的函数保持不变
         function resetBackground() {
             setRandomWallpaper();
             document.getElementById('darkModeToggle').checked = false;
@@ -786,7 +752,6 @@
             localStorage.removeItem('customBackground');
         }
 
-        // 修改深色模式切换函数
         function toggleDarkMode() {
             const isDarkMode = document.getElementById('darkModeToggle').checked;
             const hasCustomBg = localStorage.getItem('customBackground');
@@ -800,7 +765,6 @@
                 } else {
                     document.body.classList.remove('dark-mode');
                     setTimeout(() => {
-                        // 使用保存的壁纸或随机选择一张
                         const savedWallpaper = localStorage.getItem('currentWallpaper');
                         if (savedWallpaper) {
                             document.body.style.backgroundImage = `url('./Welcome/img/Wallpaper/${savedWallpaper}.png')`;
@@ -816,16 +780,13 @@
             localStorage.setItem('darkMode', isDarkMode);
         }
 
-        // 添加日期显示控制函数
         function toggleDate() {
             const dateElement = document.getElementById('date');
             const isVisible = document.getElementById('dateToggle').checked;
             dateElement.classList.toggle('show', isVisible);
-            // 保存设置
             localStorage.setItem('showDate', isVisible);
         }
 
-        // 添加背景图片处理函数
         function handleBgUpload(event) {
             const file = event.target.files[0];
             if (file && file.type.startsWith('image/')) {
@@ -851,7 +812,6 @@
             }
         }
 
-        // 添加自动深色模式检查函数
         function checkAutoDarkMode() {
             const hour = new Date().getHours();
             const minutes = new Date().getMinutes();
@@ -866,10 +826,8 @@
             }
         }
 
-        // 每分钟检查一次是否需要自动切换深色模式
         setInterval(checkAutoDarkMode, 60000);
 
-        // 修改页面跳转动画
         document.querySelectorAll('.enter-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -881,7 +839,6 @@
             });
         });
 
-        // 添加隐藏按钮功能
         function toggleButtons() {
             const isHidden = document.getElementById('hideButtonsToggle').checked;
             const buttonGroup = document.querySelector('.button-group');
@@ -889,14 +846,12 @@
             localStorage.setItem('hideButtons', isHidden);
         }
 
-        // 添加精简模式功能
         function toggleMinimalMode() {
             const isMinimal = document.getElementById('minimalModeToggle').checked;
             document.body.classList.toggle('minimal-mode', isMinimal);
             localStorage.setItem('minimalMode', isMinimal);
         }
 
-        // 修改壁纸模糊功能
         function updateBgBlur() {
             const blurValue = document.getElementById('bgBlurSlider').value;
             requestAnimationFrame(() => {
@@ -908,4 +863,4 @@
     </script>
 </body>
 
-</html> 
+</html>

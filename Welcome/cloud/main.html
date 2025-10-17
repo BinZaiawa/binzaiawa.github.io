@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bin | 网盘分享总汇</title>
+    <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        /* ========== 全局字体强制替换 ========== */
+        @font-face {
+            font-family: 'Baofont';
+            src: url('./Baofont.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        *:not(.fa):not(.fas):not(.fab):not(.far):not(.fal) {
+            font-family: 'Baofont', sans-serif !important;
+        }
+
+        /* ========== 其余样式不变 ========== */
+        :root {
+            --theme-color: #3498db;
+            --theme-color-rgb: 52, 152, 219;
+            transition: --theme-color 0.3s ease, --theme-color-rgb 0.3s ease;
+        }
+        * {
+            transition: background-color 0.3s ease,
+                        border-color 0.3s ease,
+                        box-shadow 0.3s ease,
+                        color 0.3s ease;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            transition: all 0.5s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header-container {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.5s ease;
+        }
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            margin: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transition: all 0.5s ease;
+            border: 4px solid white;
+        }
+        .profile-pic:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .profile-pic:hover img {
+            transform: scale(1.1);
+        }
+        .title {
+            margin: 25px 0;
+            font-size: 2.5em;
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: all 0.5s ease;
+        }
+        .subtitle {
+            width: 80%;
+            max-width: 600px;
+            margin: 15px auto;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
+            transition: background 0.3s ease;
+        }
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-in-out;
+            flex: 1;
+            width: calc(100% - 80px);
+            perspective: 1000px;
+        }
+        .button {
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 15px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        background-color 0.3s ease,
+                        border-color 0.3s ease,
+                        box-shadow 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(var(--theme-color-rgb), 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid var(--theme-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 5px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .button i {
+            font-size: 1.2em;
+        }
+        .button:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            box-shadow: 0 15px 35px rgba(var(--theme-color-rgb), 0.2);
+            background: var(--theme-color);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .button-container {
+                padding: 15px;
+                gap: 15px;
+            }
+            .button {
+                padding: 15px;
+                font-size: 0.9em;
+            }
+            .tooltip {
+                display: none;
+            }
+            .theme-color-picker {
+                bottom: 10px;
+                right: 10px;
+                transform: scale(0.8);
+            }
+            .button:active {
+                transform: scale(0.95);
+                transition: transform 0.1s;
+            }
+        }
+        @media (max-width: 480px) {
+            .button-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .theme-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #2c3e50;
+            padding: 10px;
+            transition: all 0.5s ease;
+        }
+        .theme-button:hover {
+            transform: rotate(30deg);
+        }
+        [data-theme="dark"] {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        [data-theme="dark"] .header-container {
+            background: rgba(0, 0, 0, 0.5);
+            margin-bottom: 0;
+        }
+        [data-theme="dark"] .button-container {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
+            margin-top: 0;
+            padding-top: 0;
+        }
+        [data-theme="dark"] .button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: var(--theme-color);
+        }
+        [data-theme="dark"] .theme-button {
+            color: #fff;
+        }
+        [data-theme="dark"] .title {
+            color: #fff;
+        }
+        [data-theme="dark"] .button:hover {
+            background: var(--theme-color);
+            color: white;
+        }
+        [data-theme="dark"] .profile-pic {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        [data-theme="light"] {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .nav-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #2c3e50;
+            padding: 10px;
+            transition: all 0.5s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-button:hover {
+            transform: translateX(-5px);
+        }
+        [data-theme="dark"] .nav-button {
+            color: #fff;
+        }
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            width: max-content;
+            max-width: 200px;
+            z-index: 100;
+        }
+        .button:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            bottom: 110%;
+        }
+        .tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            background: rgba(var(--theme-color-rgb), 0.2);
+            color: inherit;
+            transition: background-color 0.3s ease;
+        }
+        .theme-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .color-option {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .color-option.active {
+            border-color: var(--theme-color);
+            transform: scale(1.1);
+        }
+        .theme-color-picker {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 100%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-right: 5px;
+            gap: 5px;
+            z-index: 1000;
+        }
+        .theme-color-picker.show {
+            display: flex;
+        }
+        [data-theme="dark"] .theme-color-picker {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .palette-button {
+            position: relative;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #2c3e50;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .palette-button {
+            color: #fff;
+        }
+        .palette-button:hover {
+            transform: rotate(30deg);
+        }
+        .more-colors {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--theme-color);
+            transition: all 0.3s ease;
+            position: relative;
+            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 5px;
+        }
+        .more-colors:hover {
+            transform: scale(1.1);
+            border-color: var(--theme-color);
+            box-shadow: 0 0 10px rgba(var(--theme-color-rgb), 0.3);
+        }
+        .color-picker-wrapper {
+            position: absolute;
+            top: 0;
+            right: 100%;
+            margin-right: 5px;
+            display: none;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1001;
+        }
+        [data-theme="dark"] .color-picker-wrapper {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .color-picker-input {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .color-picker-input::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .color-picker-input::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        .color-wheel-wrapper {
+            position: absolute;
+            top: 0;
+            right: 100%;
+            margin-right: 10px;
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1001;
+        }
+        .color-wheel-wrapper.show {
+            display: block;
+        }
+        .color-wheel {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            position: relative;
+            background: conic-gradient(
+                red, yellow, lime, cyan, blue, magenta, red
+            );
+            cursor: pointer;
+        }
+        .color-picker-handle {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        [data-theme="dark"] .color-wheel-wrapper {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .color-preview-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .color-value {
+            font-size: 14px;
+            color: #666;
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        [data-theme="dark"] .color-value {
+            color: #fff;
+        }
+
+        /* ========== 新增功能样式 ========== */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--theme-color);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-chip.active {
+            background: var(--theme-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 预加载动画 -->
+    <div class="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="header-container">
+        <div class="back-button">
+            <a href="https://binzaiawa.github.io/Welcome/page.html" class="nav-button">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+        <!-- 分类筛选器 -->
+        <div class="filter-container">
+            <div class="filter-chip active" data-filter="all">全部</div>
+            <div class="filter-chip" data-filter="dji-rc2">DJI RC2文件</div>
+            <div class="filter-chip" data-filter="vpn">VPN</div>
+            <div class="filter-chip" data-filter="software">软件分享</div>
+        </div>
+        <div class="theme-controls">
+            <button class="palette-button" id="paletteToggle">
+                <i class="fas fa-palette"></i>
+            </button>
+            <div class="theme-color-picker">
+                <div class="color-option" data-color="#3498db" style="background: #3498db"></div>
+                <div class="color-option" data-color="#e74c3c" style="background: #e74c3c"></div>
+                <div class="color-option" data-color="#2ecc71" style="background: #2ecc71"></div>
+                <div class="color-option" data-color="#9b59b6" style="background: #9b59b6"></div>
+                <div class="more-colors" id="moreColors">
+                    <div class="color-wheel-wrapper">
+                        <div class="color-wheel" id="colorWheel">
+                            <div class="color-picker-handle" id="colorHandle"></div>
+                        </div>
+                        <div class="color-preview-container">
+                            <div class="color-preview" id="colorPreview"></div>
+                            <div class="color-value" id="colorValue"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="themeToggle" class="theme-button">
+                <i class="fas fa-sun"></i>
+            </button>
+        </div>
+        <div class="title">欢迎进入网盘分享总汇</div>
+        <div class="subtitle"></div>
+    </div>
+
+    <div class="button-container">
+        <!-- DJI RC2文件 分类 -->
+        <a href="https://binzaina.lanzoul.com/ipzJg35t3c9c" class="button" data-category="dji-rc2">
+            <i class="fas fa-microchip"></i> DJI RC2桌面安装
+            <span class="tooltip">DJI RC2桌面安装及视频教程</span>
+            <span class="tag">DJI RC2文件</span>
+        </a>
+        <a href="https://binzaina.lanzoul.com/i83AK35t3rkd" class="button" data-category="dji-rc2">
+            <i class="fas fa-cog"></i> DJI RC2桌面安装教程
+            <span class="tooltip">DJI RC2桌面安装及视频教程</span>
+            <span class="tag">DJI RC2文件</span>
+        </a>
+        <a href="./tools/DJI_RC2_Tools.html" class="button" data-category="dji-rc2">
+            <i class="fas fa-toolbox"></i> RC2工具包
+            <span class="tooltip">辅助工具与脚本（暂时为空）</span>
+            <span class="tag">DJI RC2文件</span>
+        </a>
+
+        <!-- VPN 分类 -->
+        <a href="https://binzaina.lanzoul.com/iKviH376ur2b" class="button" data-category="vpn">
+            <i class="fas fa-shield-alt"></i> LVCHA.VPN
+            <span class="tooltip">LVCHA.VPN</span>
+            <span class="tag">VPN</span>
+        </a>
+        <a href="https://binzaina.lanzoul.com/ibeNv370qahe" class="button" data-category="vpn">
+            <i class="fas fa-lock"></i> 番石榴VPN
+            <span class="tooltip">番石榴VPN客户端下载（速度较慢）</span>
+            <span class="tag">VPN</span>
+        </a>
+        <a href="./tools/VPN_Guide.html" class="button" data-category="vpn">
+            <i class="fas fa-book"></i> 使用指南
+            <span class="tooltip">详细配置教程（等待补充...）</span>
+            <span class="tag">VPN</span>
+        </a>
+
+        <!-- 软件分享 分类 -->
+        <a href="https://binzaina.lanzoul.com/iIZUt376urqf" class="button" data-category="software">
+            <i class="fas fa-laptop-code"></i> Google Play 商店
+            <span class="tooltip">Google Play 商店下载</span>
+            <span class="tag">软件分享</span>
+        </a>
+        <a href="https://binzaina.lanzoul.com/ip6Zx376uvib" class="button" data-category="software">
+            <i class="fas fa-tools"></i> Telegram下载
+            <span class="tooltip">Telegram下载</span>
+            <span class="tag">软件分享</span>
+        </a>
+        <a href="https://binzaina.lanzoul.com/b014wqmxje" class="button" data-category="software">
+            <i class="fas fa-gamepad"></i> GPSSpeed下载
+            <span class="tooltip">GPSSpeed下载</span>
+            <span class="tag">软件分享</span>
+        </a>
+    </div>
+
+    <script>
+        // 保持原有JavaScript代码不变
+        document.addEventListener('DOMContentLoaded', function() {
+            // 预加载处理
+            window.addEventListener('load', () => {
+                document.querySelector('.preloader').style.opacity = '0';
+                setTimeout(() => document.querySelector('.preloader').remove(), 500);
+            });
+
+            // 分类筛选功能
+            const filterChips = document.querySelectorAll('.filter-chip');
+            const buttons = document.querySelectorAll('.button');
+            
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    
+                    const filter = chip.dataset.filter;
+                    buttons.forEach(btn => {
+                        const category = btn.dataset.category;
+                        btn.style.display = (filter === 'all' || category === filter) ? 'flex' : 'none';
+                    });
+                });
+            });
+
+            // 主题切换增强
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle.querySelector('i');
+            
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+
+            // 颜色选择器保持原有功能
+            const colorOptions = document.querySelectorAll('.color-option');
+            const root = document.documentElement;
+            const paletteToggle = document.getElementById('paletteToggle');
+            const themeColorPicker = document.querySelector('.theme-color-picker');
+            const moreColors = document.getElementById('moreColors');
+            const wheelWrapper = document.querySelector('.color-wheel-wrapper');
+            const colorWheel = document.getElementById('colorWheel');
+            const colorHandle = document.getElementById('colorHandle');
+            
+            const savedColor = localStorage.getItem('themeColor') || '#3498db';
+            setThemeColor(savedColor);
+
+            paletteToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                themeColorPicker.classList.toggle('show');
+                wheelWrapper.classList.remove('show');
+            });
+
+            colorOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const color = option.dataset.color;
+                    setThemeColor(color);
+                    localStorage.setItem('themeColor', color);
+                    themeColorPicker.classList.remove('show');
+                });
+            });
+
+            moreColors.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                wheelWrapper.classList.toggle('show');
+            });
+
+            wheelWrapper.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            let isDragging = false;
+
+            colorHandle.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                updateColor(e);
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    updateColor(e);
+                }
+            });
+
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+
+            function updateColor(e) {
+                const wheelRect = colorWheel.getBoundingClientRect();
+                const wheelCenterX = wheelRect.left + wheelRect.width / 2;
+                const wheelCenterY = wheelRect.top + wheelRect.height / 2;
+                
+                let x = e.clientX - wheelCenterX;
+                let y = e.clientY - wheelCenterY;
+                
+                const distance = Math.sqrt(x * x + y * y);
+                const radius = wheelRect.width / 2;
+                
+                if (distance > radius) {
+                    const angle = Math.atan2(y, x);
+                    x = Math.cos(angle) * radius;
+                    y = Math.sin(angle) * radius;
+                }
+                
+                colorHandle.style.transform = `translate(${x}px, ${y}px)`;
+                
+                const hue = (Math.atan2(y, x) * 180 / Math.PI + 180) % 360;
+                const saturation = Math.min(100, (distance / radius) * 100);
+                const color = HSLToHex(hue, saturation, 50);
+                
+                const colorPreview = document.getElementById('colorPreview');
+                const colorValue = document.getElementById('colorValue');
+                colorPreview.style.backgroundColor = color;
+                colorValue.textContent = color.toUpperCase();
+                
+                setThemeColor(color);
+                localStorage.setItem('themeColor', color);
+            }
+
+            function HSLToHex(h, s, l) {
+                s /= 100;
+                l /= 100;
+                const k = n => (n + h / 30) % 12;
+                const a = s * Math.min(l, 1 - l);
+                const f = n =>
+                    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+                return "#" + [0, 8, 4].map(n => {
+                    const rgb = Math.round(255 * f(n));
+                    return rgb.toString(16).padStart(2, '0');
+                }).join('');
+            }
+
+            colorHandle.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                updateColor(e.touches[0]);
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    updateColor(e.touches[0]);
+                }
+            });
+
+            document.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!paletteToggle.contains(e.target) && 
+                    !themeColorPicker.contains(e.target) &&
+                    !moreColors.contains(e.target) &&
+                    !wheelWrapper.contains(e.target)) {
+                    themeColorPicker.classList.remove('show');
+                    wheelWrapper.classList.remove('show');
+                }
+            });
+
+            themeColorPicker.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            function setThemeColor(color) {
+                const rgb = hexToRgb(color);
+                root.style.setProperty('--theme-color', color);
+                root.style.setProperty('--theme-color-rgb', rgb);
+                colorOptions.forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.color === color);
+                });
+            }
+
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` 
+                    : null;
+            }
+
+            // 按钮交互保持原有逻辑
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.button').forEach(button => {
+                button.style.opacity = '0';
+                button.style.transform = 'translateY(20px)';
+                observer.observe(button);
+                
+                // 触摸设备支持
+                if ('ontouchstart' in window) {
+                    button.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.95)';
+                    });
+
+                    button.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
+                }
+
+                // 点击效果
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const href = this.getAttribute('href');
+                    
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 100);
+
+                    document.body.style.opacity = '0';
+                    setTimeout(() => {
+                        if (this.id === 'backButton') {
+                            window.open(href, '_self');
+                            setTimeout(() => {
+                                window.close();
+                            }, 100);
+                        } else {
+                            window.open(href, '_blank');
+                        }
+                        document.body.style.opacity = '1';
+                    }, 300);
+                });
+            });
+
+            // 错误监控
+            window.addEventListener('error', (e) => {
+                console.error(`Error: ${e.message}`);
+            });
+        });
+    </script>
+</body>
+</html>
